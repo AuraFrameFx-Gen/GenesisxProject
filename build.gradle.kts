@@ -15,23 +15,9 @@ kotlin {
     jvmToolchain(17)
 }
 
-buildscript {
-    ext {
-        kotlinVersion = "1.9.22"
-    }
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.22-1.0.16")
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 

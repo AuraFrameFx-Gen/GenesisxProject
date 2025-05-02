@@ -3,7 +3,7 @@
     kotlin = "1.9.22"
     hilt = "2.56.2"
     navigation = "2.7.6"
-    compose = "1.5.4"
+    compose = "1.8.0"
     activity = "1.10.1"
     lifecycle = "2.8.7"
     core = "1.16.0"
