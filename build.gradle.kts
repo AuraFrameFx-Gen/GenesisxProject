@@ -7,6 +7,15 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.22-1.0.16"
 }
 
+gradle.rootProject.tasks.withType<org.gradle.api.tasks.Delete>().configureEach {
+    delete("build")
+}
+
+gradle.rootProject.tasks.withType<org.gradle.api.tasks.Sync>().configureEach {
+    from("build")
+    into("build")
+}
+
 buildscript {
     repositories {
         google()
