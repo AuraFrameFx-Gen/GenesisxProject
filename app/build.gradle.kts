@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.navigation.safe.args)
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -49,7 +49,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = libs.versions.compose.get()
     }
 
     compileOptions {
@@ -88,13 +88,15 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        jniLibs.useLegacyPackaging = true
     }
+    buildToolsVersion = "35.0.0"
 }
 
 dependencies {
     coreLibraryDesugaring(libs.desugar)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(platform(libs.compose.bom))
     implementation("androidx.compose.material3:material3:1.3.2")

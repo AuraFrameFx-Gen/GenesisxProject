@@ -6,12 +6,15 @@
     <!-- Neon Colors -->
     <color name="neon_teal">#00FFCC</color>      <!-- Primary color -->
     <color name="neon_purple">#FF00FF</color>     <!-- Secondary color -->
-    <color name="neon_pink">#FF00FF</color>      <!-- Accent color -->
+    <color name="neon_blue">#00FFFF</color>      <!-- Neon blue color -->
+    <color name="neon_yellow">#FFFF00</color>     <!-- Neon yellow color -->
+    <color name="neon_red">#FF0000</color>      <!-- Neon red color -->
     <color name="teal_glow">#00FFFF</color>      <!-- Glowing effect -->
 
     <!-- Background Colors -->
-    <color name="dark_background">#000000</color>  <!-- Pure black background -->
+    <color name="dark_background">#1A1A2E</color>  <!-- Deep space background -->
     <color name="container_glow">#3300FFCC</color> <!-- Semi-transparent teal glow -->
+    <color name="ic_launcher_background">#1A1A2E</color> <!-- Launcher icon background -->
 
     <!-- Text Colors -->
     <color name="text_neon">#00FFCC</color>      <!-- Neon teal text -->
@@ -19,8 +22,8 @@
     <!-- Material3 Theme Colors -->
     <color name="colorPrimary">@color/neon_teal</color>
     <color name="colorSecondary">@color/neon_purple</color>
-    <color name="colorTertiary">@color/neon_pink</color>
+    <color name="colorTertiary">@color/neon_blue</color>
     <color name="windowBackground">@color/dark_background</color>
-    <color name="navigationBarColor">@color/neon_pink</color>
+    <color name="navigationBarColor">@color/neon_purple</color>
     <color name="statusBarColor">@color/dark_background</color>
 </resources>
