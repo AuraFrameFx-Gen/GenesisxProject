@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu Color Flow System -->
+
+    <!-- Main Menu Colors -->
+    <color name="main_menu_primary">#00FFCC</color>
+    <color name="main_menu_secondary">#00FFFF</color>
+    <color name="main_menu_text">#00FFCC</color>
+    <color name="main_menu_glow">#3300FFCC</color>
+
+    <!-- Ecosystem Menu Colors -->
+    <color name="ecosystem_menu_primary">#FF00FF</color>
+    <color name="ecosystem_menu_secondary">#00FFFF</color>
+    <color name="ecosystem_menu_text">#00FFFF</color>
+    <color name="ecosystem_menu_glow">#FFFFFF</color>
+
+    <!-- Xposed Menu Colors -->
+    <color name="xposed_menu_primary">#FF00FF</color>
+    <color name="xposed_menu_secondary">#FFFF00</color>
+    <color name="xposed_menu_accent">#FF0000</color>
+    <color name="xposed_menu_text">#FF00FF</color>
+    <color name="xposed_menu_glow">#FF00FF</color>
+
+    <!-- Secret Menu Colors -->
+    <color name="secret_menu_primary">#00FFFF</color>
+    <color name="secret_menu_secondary">#FF00FF</color>
+    <color name="secret_menu_accent">#FFFF00</color>
+    <color name="secret_menu_text">#00FFFF</color>
+    <color name="secret_menu_glow">#3300FFCC</color>
+
+    <!-- Menu Transition Colors -->
+    <color name="menu_transition_glow">#00FFFF</color>
+    <color name="menu_transition_background">#000000</color>
+    <color name="menu_transition_text">#00FFCC</color>
+
+    <!-- Menu Container Styles -->
+    <color name="menu_container_background">#1A1A2E</color>
+    <color name="menu_container_glow">#3300FFCC</color>
+    <color name="menu_container_shadow">#00CC99</color>
+</resources>

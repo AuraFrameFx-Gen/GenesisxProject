@@ -1,0 +1,6 @@
+- name: Create Artifact YAML
+  uses: opencontextinc/create-artifact-yaml@v4
+  with:
+    type: sbom
+    url: https://example.com/artifact
+    directory: artifacts-directory
