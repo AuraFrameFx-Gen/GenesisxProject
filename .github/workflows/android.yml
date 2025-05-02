@@ -20,19 +20,26 @@ jobs:
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout code
-        uses: actions/checkout@v4  # Use v4 for potential improvements
+        uses: actions/checkout@v4
 
       # Step 2: Set up Java environment (CRITICAL!)
       - name: Set up JDK
-        uses: actions/setup-java@v4 # Use v4 for potential improvements
+        uses: actions/setup-java@v4
         with:
-          java-version: '17' # Or '21' if you're targeting that
-          distribution: 'zulu' #  Recommended for GitHub Actions
-          cache: 'gradle' #  Cache JDK installation
+          java-version: '22'  # Changed to Java 22
+          distribution: 'zulu'
+          cache: 'gradle'
+          architecture: x64
 
-      # Step 3: Java version check (for debugging)
+      # Step 3: Java version and environment debugging
       - name: Check Java version
         run: java -version
+
+      - name: Check Java Home
+        run: echo "JAVA_HOME: $JAVA_HOME"
+
+      - name: List JDK Contents
+        run: ls -l $JAVA_HOME/bin
 
       # Step 4: Make Gradle wrapper executable
       - name: Make Gradle wrapper executable
@@ -40,7 +47,7 @@ jobs:
 
       # Step 5: Cache Gradle dependencies
       - name: Cache Gradle dependencies
-        uses: actions/cache@v4 # Use v4 for potential improvements
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -55,7 +62,7 @@ jobs:
 
       # Step 7: Upload the APK as an artifact
       - name: Upload APK
-        uses: actions/upload-artifact@v4 # Use v4 for potential improvements
+        uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
           path: app/build/outputs/apk/debug/*.apk
