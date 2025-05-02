@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.navigation.safe.args) apply false
+    id("com.google.devtools.ksp") version "1.9.22-1.0.16"
 }
 
 buildscript {
