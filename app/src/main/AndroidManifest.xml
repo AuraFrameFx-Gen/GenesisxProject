@@ -83,7 +83,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AuraFrameFX">
+        android:theme="@android:style/Theme.Material3.Dark.NoActionBar">
         
         <meta-data
             android:name="xposed:moduleID"
@@ -102,7 +102,7 @@
             android:value="@string/xposed_description" />
         <meta-data
             android:name="xposed:device"
-            android:value="@string/supported_devices" />
+            android:value="OnePlus 8T,OnePlus 9,OnePlus 9 Pro,OnePlus 9T,OnePlus 10T,Pixel 3,Pixel 3a,Pixel 4,Pixel 4a,Pixel 4a 5G,Pixel 5,Pixel 5a,Pixel 6,Pixel 6 Pro,Pixel 6a,Pixel 7,Pixel 7 Pro,Pixel 7a,Pixel 8,Pixel 8 Pro" />
         <meta-data
             android:name="xposed:frameworkTarget"
             android:value="35" />
@@ -145,7 +145,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/notification_color" />
+            android:resource="@color/neon_purple" />
 
         <service
             android:name=".service.VertexCloudService"
