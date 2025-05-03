@@ -7,18 +7,19 @@ plugins {
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = 35
+    buildToolsVersion = "36.0.0"
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = 31
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        proguardFiles("proguard-rules.pro")
     }
 
     buildFeatures {
@@ -37,16 +38,22 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
+    kotlin {
+        jvmToolchain(17)
+    }
+
     packaging {
         resources {
             excludes += setOf("/META-INF/{AL2.0,LGPL2.1}")
         }
         jniLibs.useLegacyPackaging = true
     }
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            all {
+                it.useJUnitPlatform()
+            }
         }
     }
 

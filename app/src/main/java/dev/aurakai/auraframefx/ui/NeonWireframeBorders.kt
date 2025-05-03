@@ -16,7 +16,7 @@ import dev.aurakai.auraframefx.ui.theme.NeonPurple
 @Composable
 fun NeonWireframeCard(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -54,7 +54,7 @@ fun NeonWireframeCard(
 fun NeonWireframeButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,
@@ -82,7 +82,7 @@ fun NeonWireframeButton(
 fun NeonWireframeText(
     text: String,
     modifier: Modifier = Modifier,
-    style: TextStyle = MaterialTheme.typography.bodyLarge
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
     Text(
         text = text,
@@ -106,7 +106,7 @@ fun NeonWireframeText(
 
 @Composable
 fun NeonWireframeDivider(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier

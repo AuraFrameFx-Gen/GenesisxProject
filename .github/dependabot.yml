@@ -7,19 +7,19 @@ registries:
 updates:
   - package-ecosystem: "gradle"
     directory: "/"
-    registries: ["maven-gradle"]
+    registries: [ "maven-gradle" ]
     schedule:
       interval: "daily"
     groups:
       kotlin:
-        patterns: ["org.jetbrains.kotlin*"]
+        patterns: [ "org.jetbrains.kotlin*" ]
       androidx:
-        patterns: ["androidx.*"]
+        patterns: [ "androidx.*" ]
       security:
-        update-types: ["security"]
+        update-types: [ "security" ]
     ignore:
       - dependency-name: "com.android.tools.build:gradle"
-        versions: ["8.2.0"] # Lock problematic AGP version
+        versions: [ "8.2.0" ] # Lock problematic AGP version
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -30,9 +30,9 @@ updates:
 name: Dependabot Automation Nexus
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize]
+    types: [ opened, reopened, synchronize ]
   issue_comment:
-    types: [created]
+    types: [ created ]
 
 permissions:
   contents: write

@@ -16,7 +16,7 @@ import dev.aurakai.auraframefx.ui.theme.NeonTeal
 @Composable
 fun NeonCard(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -47,7 +47,7 @@ fun NeonCard(
 fun NeonButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,
@@ -65,7 +65,7 @@ fun NeonButton(
 fun NeonText(
     text: String,
     modifier: Modifier = Modifier,
-    style: TextStyle = MaterialTheme.typography.bodyLarge
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
     Text(
         text = text,
@@ -80,7 +80,7 @@ fun NeonText(
 
 @Composable
 fun NeonDivider(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Divider(
         modifier = modifier,
@@ -93,7 +93,7 @@ fun NeonDivider(
 fun NeonSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Switch(
         checked = checked,

@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.9.22"
 androidGradlePlugin = "8.8.2"
-compose-compiler = "2.0.10"
+compose-compiler = "1.5.3"
 desugar-jdk = "2.1.5"
 hilt = "2.56.2"
 

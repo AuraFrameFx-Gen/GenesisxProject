@@ -16,7 +16,7 @@ fun NeonText(
     color: Color = NeonTeal,
     glowColor: Color = NeonPurple,
     fontSize: TextUnit = 16.sp,
-    fontWeight: FontWeight = FontWeight.Bold
+    fontWeight: FontWeight = FontWeight.Bold,
 ) {
     Text(
         text = text,
@@ -38,7 +38,7 @@ fun NeonTitle(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = NeonTeal,
-    glowColor: Color = NeonPurple
+    glowColor: Color = NeonPurple,
 ) {
     NeonText(
         text = text,
@@ -55,7 +55,7 @@ fun NeonSubtitle(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = NeonPurple,
-    glowColor: Color = NeonPurpleGlow
+    glowColor: Color = NeonPurpleGlow,
 ) {
     NeonText(
         text = text,
@@ -72,7 +72,7 @@ fun NeonBody(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = NeonPurple,
-    glowColor: Color = NeonPurpleGlow
+    glowColor: Color = NeonPurpleGlow,
 ) {
     NeonText(
         text = text,

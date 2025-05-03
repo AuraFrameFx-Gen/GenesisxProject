@@ -4,12 +4,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
-repositories {
-    google()
-    mavenCentral()
-    maven { url = uri("https://jitpack.io") }
-}
-
+// Clean build directory
 tasks.register("clean", Delete::class) {
     delete(layout.buildDirectory)
 }
