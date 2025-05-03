@@ -1,11 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias( com.google.dagger.hilt-android )
-
-    id("com.google.devtools.ksp") version "1.9.22-1.0.16"
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -54,17 +52,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "22" // Correct way to set jvmTarget
-             freeCompilerArgs += listOf(
-                    "-Xjvm-default=all",
-                    "-opt-in=kotlin.RequiresOptIn",
-                    "-Xallow-result-return-type"
-                )
-        }
-    }
-
     packaging {
         resources {
             excludes += setOf("/META-INF/{AL2.0,LGPL2.1}")
@@ -72,4 +59,42 @@ android {
         jniLibs.useLegacyPackaging = true
     }
     buildToolsVersion = "35.0.0"
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+    kotlin {
+        sourceSets.configureEach {
+            kotlin.srcDir("build/generated/ksp/$name/kotlin")
+        }
+    }
+}
+
+dependencies {
+    // Core Android dependencies
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+
+    // Compose dependencies
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+
+    // Hilt dependencies
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // Test dependencies
+    implementation(libs.junit)
+    implementation(libs.androidx.test.ext.junit)
+    implementation(libs.androidx.test.espresso.core)
+    implementation(libs.androidx.ui.test.junit4)
+
+    // Debug-only dependencies
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
