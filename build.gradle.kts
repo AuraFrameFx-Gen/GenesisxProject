@@ -7,10 +7,7 @@ plugins {
 repositories {
     google()
     mavenCentral()
-}
-
-dependencies {
-    ksp(libs.hilt.compiler)
+    maven { url = uri("https://jitpack.io") }
 }
 
 tasks.register("clean", Delete::class) {
