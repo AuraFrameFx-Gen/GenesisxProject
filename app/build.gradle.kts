@@ -104,10 +104,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.8.1")
 
     // Google Cloud Services (Reduced set)
-    implementation(platform("com.google.cloud:libraries-bom:26.59.0"))
-    implementation("com.google.cloud:google-cloud-run:2.1.1")
-    implementation("com.google.cloud:google-cloud-auth:2.5.0")
-    implementation("com.google.cloud:google-cloud-storage:2.52.1")
+    implementation(platform("com.google.cloud:libraries-bom:2.24.0"))
+    implementation("com.google.cloud:google-cloud-storage:2.5.0")
 
     // Java 8+ compatibility
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")

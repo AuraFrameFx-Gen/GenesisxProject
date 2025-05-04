@@ -28,6 +28,10 @@ buildscript {
         maven { url = uri("https://dl.bintray.com/xposed/maven") }
         maven { url = uri("https://dl.bintray.com/xposed/maven") }
         maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
