@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "dev.aurakai.auraframefx"
     compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    buildToolsVersion = "35.0.0"
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
