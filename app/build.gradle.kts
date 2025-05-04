@@ -104,10 +104,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.8.1")
 
     // Google Cloud Services (Reduced set)
-    implementation(platform("com.google.cloud:libraries-bom:2.24.0"))
-    implementation("com.google.cloud:google-cloud-run:2.0.1")
-    implementation("com.google.cloud:google-cloud-auth:2.0.1")
-    implementation("com.google.cloud:google-cloud-storage:2.0.1")
+    implementation(platform("com.google.cloud:libraries-bom:26.59.0"))
+    implementation("com.google.cloud:google-cloud-run:2.0.0")
+    implementation("com.google.cloud:google-cloud-auth:2.0.0")
+    debugImplementation("com.google.cloud:google-cloud-storage:2.52.1")
 
     // Testing
     testImplementation(libs.junit)
