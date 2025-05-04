@@ -46,8 +46,13 @@ class ApiService(private val context: Context) {
     }
 
     private fun createRetrofit(): Retrofit {
+        val context = context.applicationContext
+        val authBaseUrl = context.getString(R.string.cloud_run_auth_service)
+        val storageBaseUrl = context.getString(R.string.cloud_run_storage_service)
+        val mlBaseUrl = context.getString(R.string.cloud_run_ml_service)
+        
         return Retrofit.Builder()
-            .baseUrl("https://your-api-endpoint.com/") // Replace with your actual API endpoint
+            .baseUrl(authBaseUrl)
             .client(createOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

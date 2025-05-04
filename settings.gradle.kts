@@ -29,11 +29,6 @@ include(
     ":XposedBridge-art"
 )
 
-// Enable parallel execution
-gradle.startParameter.isProfile = Runtime.getRuntime().availableProcessors()
-
-// Enable build caching
-gradle.startParameter.isConfigurationCache = true
 
 // Enable configuration on demand
 gradle.startParameter.isConfigureOnDemand = true

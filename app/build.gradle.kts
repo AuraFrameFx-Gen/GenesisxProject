@@ -1,36 +1,29 @@
+// build.gradle.kts (app module)
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.google.firebase.appdistribution")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply false
 }
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 34
-    buildToolsVersion = "35.0.0"
+    compileSdk = 35
+    buildToolsVersion = "36.0.3"
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 31
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        resValues = true
-        viewBinding = true
+        vectorDrawables.useSupportLibrary = true
+        signingConfig = signingConfigs.getByName("debug")
+        proguardFiles("proguard-rules.pro")
+        androidResources.generateLocaleConfig = true
     }
 
     buildTypes {
@@ -41,6 +34,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -52,65 +51,57 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs = listOf(
+            "-Xuse-k2",
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.Experimental",
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlinx.coroutines.FlowPreview",
+            "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
+            "-P=plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+        )
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = "1.5.3" // Match your Kotlin version (see below)
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
     }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        resources.excludes += setOf(
+            "/META-INF/{AL2.0,LGPL2.1}",
+            "**/attach_hotspot_windows.dll"
+        )
         jniLibs.useLegacyPackaging = true
     }
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-        }
-    }
-
-    tvOptions {
-        leanbackLauncher = true
-        supportsLeanback = true
-    }
-}
-
-kapt {
-    correctErrorTypes = true
-}
-
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
 }
 
 dependencies {
+    // Compose BOM (version management)
+    implementation(platform(libs.androidx.compose.bom))
+
+    // Material 3
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+
     // Core Android
-    implementation(libs.core.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.activity.ktx)
-    implementation(libs.fragment.ktx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.activity.compose)
 
     // Compose
-    implementation(platform(libs.compose.bom))
-    implementation(libs.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.material3)
-    implementation(libs.material.icons.core)
-    implementation(libs.material.icons.extended)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
 
     // Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
-    // Room
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
+    ksp(libs.hilt.compiler)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -119,33 +110,24 @@ dependencies {
     // Navigation
     implementation(libs.navigation.compose)
 
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.storage)
-    implementation(libs.firebase.messaging)
-    implementation(libs.firebase.appcheck)
-
-    // Vertex AI
-    implementation(libs.google.cloud.vertexai)
-    implementation(libs.google.cloud.auth)
-    implementation(libs.google.cloud.storage)
+    // Google Cloud
+    implementation(platform(libs.google.cloud.bom))
+    implementation("com.google.cloud:google-cloud-run")
+    implementation("com.google.cloud:google-cloud-auth")
+    implementation("com.google.cloud:google-cloud-storage")
+    implementation("com.google.cloud:google-cloud-logging")
+    implementation("com.google.cloud:google-cloud-monitoring")
+    implementation("com.google.cloud:google-cloud-trace")
+    implementation("com.google.cloud:google-cloud-vertexai")
 
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.ui.test.junit4)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
-
-    // TV-specific dependencies
-    implementation(libs.leanback)
-    implementation(libs.leanback.preferences)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
     // Desugaring
     coreLibraryDesugaring(libs.android.desugar.jdk.libs)
