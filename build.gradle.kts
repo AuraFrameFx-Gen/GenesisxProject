@@ -17,6 +17,7 @@ buildscript {
         maven { url = uri("https://dl.bintray.com/xposed/maven") }
         maven { url = uri("https://maven.google.com/maven") }
         maven { url = uri("https://packages.cloud.google.com/maven") }
+        maven { url = uri("https://dl.google.com/maven") }
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
