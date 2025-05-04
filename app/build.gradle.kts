@@ -1,41 +1,8 @@
 plugins {
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt.android)
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
-afterEvaluate {
-    project.plugins.apply("com.google.devtools.ksp")
-
-    // Configure KSP after plugins are applied
-    configure<com.google.devtools.ksp.gradle.KspExtension> {
-        arg("room.schemaLocation", "$projectDir/schemas")
-        arg("room.incremental", "true")
-    }
-}
-
-// Configure Kotlin compiler options
-kotlin {
-    jvmToolchain(17)
-
-    // Configure compiler options
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "17"
-            freeCompilerArgs += listOf(
-                "-Xuse-k2",
-                "-Xcontext-receivers",
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.Experimental",
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
-            )
-        }
-    }
+    id("com.android.application") version "8.8.2" apply true
+    id("org.jetbrains.kotlin.android") version "1.9.20" apply true
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply true
+    id("com.google.dagger.hilt.android") version "2.56.2" apply true
 }
 
 android {
@@ -49,50 +16,32 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
-        signingConfig = signingConfigs.getByName("debug")
         proguardFiles("proguard-rules.pro")
         androidResources {
             generateLocaleConfig = true
         }
+        multiDexEnabled = true
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            signingConfig = signingConfigs.getByName("release")
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20")
         }
-        debug {
-            isDebuggable = true
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs = listOf(
-            "-Xuse-k2",
             "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlin.Experimental",
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlinx.coroutines.FlowPreview",
-            "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
+            "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
         )
     }
 
@@ -108,13 +57,22 @@ android {
     packaging {
         resources {
             excludes += setOf(
-                "/META-INF/{AL2.0,LGPL2.1}",
-                "**/attach_hotspot_windows.dll"
+                "META-INF/**",
+                "**/*.kotlin_module",
+                "**/*.proto",
+                "**/*.txt",
+                "**/*.md",
+                "**/*.xml",
+                "**/*.properties"
             )
         }
         jniLibs {
             useLegacyPackaging = true
         }
+        resources.pickFirsts += setOf(
+            "**/version.txt",
+            "**/version.properties"
+        )
     }
 }
 
@@ -123,43 +81,33 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
 
     // UI Components
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
-    
+
     // Core Android
-    implementation(libs.androidx.core.ktx)
+    debugImplementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.activity.compose)
-
-    // Navigation
-    implementation(libs.navigation.compose)
 
     // Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
     // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
     // Serialization
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.serialization.protobuf)
-    implementation(libs.kotlinx.serialization.cbor)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.8.1")
 
-    // Google Cloud Services
-    implementation(platform(libs.google.cloud.bom))
-    implementation("com.google.cloud:google-cloud-run")
-    implementation("com.google.cloud:google-cloud-auth")
-    implementation("com.google.cloud:google-cloud-storage")
-    implementation("com.google.cloud:google-cloud-logging")
-    implementation("com.google.cloud:google-cloud-monitoring")
-    implementation("com.google.cloud:google-cloud-trace")
-    implementation("com.google.cloud:google-cloud-vertexai")
+    // Google Cloud Services (Reduced set)
+    implementation(platform("com.google.cloud:libraries-bom:2.24.0"))
+    implementation("com.google.cloud:google-cloud-run:2.0.1")
+    implementation("com.google.cloud:google-cloud-auth:2.0.1")
+    implementation("com.google.cloud:google-cloud-storage:2.0.1")
 
     // Testing
     testImplementation(libs.junit)
