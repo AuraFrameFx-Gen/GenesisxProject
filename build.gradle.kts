@@ -15,10 +15,18 @@ buildscript {
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://repo.gradle.org/gradle/libs-releases") }
         maven { url = uri("https://repo1.maven.org/maven2") }
-        maven { url = uri("https://dl.bintray.com/xposed/maven") }
         maven { url = uri("https://maven.google.com/maven") }
         maven { url = uri("https://packages.cloud.google.com/maven") }
         maven { url = uri("https://dl.google.com/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
+        maven { url = uri("https://dl.bintray.com/xposed/maven") }
         maven { url = uri("https://dl.bintray.com/xposed/maven") }
     }
     dependencies {
