@@ -1,10 +1,13 @@
-// build.gradle.kts (app module)
 plugins {
-    alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
 }
 
 android {
@@ -106,6 +109,11 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.protobuf)
+    implementation(libs.kotlinx.serialization.cbor)
 
     // Navigation
     implementation(libs.navigation.compose)
