@@ -7,19 +7,19 @@ plugins {
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 35
-    buildToolsVersion = "36.0.0"
+    compileSdk = 34
+    buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        proguardFiles("proguard-rules.pro")
+        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
 
     buildFeatures {
@@ -40,6 +40,9 @@ android {
 
     kotlin {
         jvmToolchain(17)
+        sourceSets.configureEach {
+            kotlin.srcDir("build/generated/ksp/$name/kotlin")
+        }
     }
 
     packaging {
@@ -48,18 +51,11 @@ android {
         }
         jniLibs.useLegacyPackaging = true
     }
+    
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
-            all {
-                it.useJUnitPlatform()
-            }
-        }
-    }
-
-    kotlin {
-        sourceSets.configureEach {
-            kotlin.srcDir("build/generated/ksp/$name/kotlin")
+            isReturnDefaultValues = true
         }
     }
 }

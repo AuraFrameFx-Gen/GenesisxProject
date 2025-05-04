@@ -1,8 +1,8 @@
 [versions]
 kotlin = "1.9.22"
 androidGradlePlugin = "8.8.2"
-compose-compiler = "1.5.3"
-desugar-jdk = "2.1.5"
+compose-compiler = "1.5.4"
+desugar-jdk = "2.0.4"
 hilt = "2.56.2"
 
 [libraries]
@@ -28,4 +28,4 @@ android-desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_li
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-ksp = { id = "com.google.devtools.ksp", version = "1.9.22-1.0.16" }
+ksp = { id = "com.google.devtools.ksp", version = "1.9.22-1.0.17" }
