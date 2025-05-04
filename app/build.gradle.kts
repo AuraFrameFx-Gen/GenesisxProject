@@ -1,32 +1,64 @@
 plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt.android)
-    alias(libs.plugins.ksp)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
+kotlin {
+    jvmToolchain(17)
+}
+
+afterEvaluate {
+    project.plugins.apply("com.google.devtools.ksp")
+
+    // Configure KSP after plugins are applied
+    configure<com.google.devtools.ksp.gradle.KspExtension> {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.incremental", "true")
+    }
+}
+
+// Configure Kotlin compiler options
+kotlin {
+    jvmToolchain(17)
+
+    // Configure compiler options
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "17"
+            freeCompilerArgs += listOf(
+                "-Xuse-k2",
+                "-Xcontext-receivers",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.Experimental",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.FlowPreview",
+                "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
+            )
+        }
+    }
 }
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 35
-    buildToolsVersion = "36.0.3"
+    compileSdk = 34
+    buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
+        vectorDrawables {
+            useSupportLibrary = true
+        }
         signingConfig = signingConfigs.getByName("debug")
         proguardFiles("proguard-rules.pro")
-        androidResources.generateLocaleConfig = true
+        androidResources {
+            generateLocaleConfig = true
+        }
     }
 
     buildTypes {
@@ -60,13 +92,12 @@ android {
             "-opt-in=kotlin.Experimental",
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlinx.coroutines.FlowPreview",
-            "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
-            "-P=plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+            "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
         )
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3" // Match your Kotlin version (see below)
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     buildFeatures {
@@ -75,34 +106,39 @@ android {
     }
 
     packaging {
-        resources.excludes += setOf(
-            "/META-INF/{AL2.0,LGPL2.1}",
-            "**/attach_hotspot_windows.dll"
-        )
-        jniLibs.useLegacyPackaging = true
+        resources {
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "**/attach_hotspot_windows.dll"
+            )
+        }
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 }
 
 dependencies {
-    // Compose BOM (version management)
+    // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
 
-    // Material 3
+    // UI Components
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
-
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
+    
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.activity.compose)
 
-    // Compose
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    debugImplementation(libs.androidx.ui.tooling)
+    // Navigation
+    implementation(libs.navigation.compose)
 
-    // Hilt
+    // Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
@@ -115,10 +151,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.kotlinx.serialization.cbor)
 
-    // Navigation
-    implementation(libs.navigation.compose)
-
-    // Google Cloud
+    // Google Cloud Services
     implementation(platform(libs.google.cloud.bom))
     implementation("com.google.cloud:google-cloud-run")
     implementation("com.google.cloud:google-cloud-auth")
@@ -134,7 +167,6 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Desugaring

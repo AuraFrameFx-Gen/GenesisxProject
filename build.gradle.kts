@@ -8,7 +8,11 @@ buildscript {
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
-        maven { url = uri("https://maven.google.com") }
+    }
+    dependencies {
+        val kotlinVersion = "1.9.20"
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:$kotlinVersion-1.0.14")
     }
 }
 
@@ -26,6 +30,9 @@ subprojects {
             )
         }
     }
+
+    // Apply Kotlin plugin to subprojects
+    apply(plugin = "org.jetbrains.kotlin.android")
 }
 
 tasks.register("clean", Delete::class) {
