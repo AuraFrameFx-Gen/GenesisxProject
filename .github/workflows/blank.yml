@@ -1,6 +1,26 @@
-- name: Create Artifact YAML
-  uses: opencontextinc/create-artifact-yaml@v4
-  with:
-    type: sbom
-    url: https://example.com/artifact
-    directory: artifacts-directory
+version: 2
+updates:
+- package-ecosystem: "npm"
+    directory: "all"⅞
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "lodash"
+        update-types: ["version-update:semver-minor"]
+  # GitHub Actions version updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "actions"
+    ignore:
+      - dependency-name: "actions/checkout"
+        update-types: ["version-update:semver-patch"]
+  # npm security updates
+  - package-ecosystem: "npm"
+    directory: "/"
+    groups:
+      security:
+        patterns: ["*"]
+        update-types: ["security-updates"]
