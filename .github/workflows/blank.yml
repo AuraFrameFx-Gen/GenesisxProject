@@ -24,7 +24,6 @@ updates:
       security:
         patterns: ["*"]
         update-types: ["security-updates"]
-: 2
    
    updates:
  - package-ecosystem: "npm"
