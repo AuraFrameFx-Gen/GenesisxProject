@@ -4,8 +4,10 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.agp.app)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+    id("com.google.devtools.ksp") version libs.versions.ksp.get()
 }
 
 android {
@@ -285,24 +287,50 @@ dependencies {
     standardImplementation(libs.com.google.android.gms.play.services.mlkit.subject.segmentation)
     standardImplementation(libs.play.services.base)
 
-    // Blur View
-    implementation(libs.blurview)
-
-    // Misc
     implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.slf4j.api)
-    implementation(libs.commons.text)
 
-    // OkHttp
-    implementation(libs.okhttp)
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.compiler)
 
-    // Room Database
+    // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Xposed
+    compileOnly(libs.xposed.api)
+
+    // Other dependencies
+    implementation(libs.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.glide)
+    ksp(libs.glide.compiler)
+
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
 }
 
 tasks.register("printVersionName") {

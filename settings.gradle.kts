@@ -3,7 +3,7 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        maven { setUrl("https://jitpack.io") }
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -13,8 +13,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { setUrl("https://jitpack.io") }
+        maven { url = uri("https://jitpack.io") }
     }
+
     versionCatalogs {
         create("libs") {
             from(files("gradle/libs.versions.toml"))
@@ -24,4 +25,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "AuraFrameFX"
 
+// Include all modules
 include(":app")
+include(":XposedBridge-art")
+include(":visualization")
+
+// Set project directories
+project(":XposedBridge-art").projectDir = file("XposedBridge-art")
+project(":visualization").projectDir = file("visualization")
