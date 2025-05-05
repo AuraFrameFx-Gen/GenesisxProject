@@ -1,9 +1,11 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.ksp)
-    alias(com.android.dynamic-feature)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.navigation.safe.args)
+    kotlin("kapt")
 }
 
 android {
@@ -23,73 +25,91 @@ android {
         }
     }
 
+    buildFeatures {
+        compose = true
+        buildConfig = true
+        resValues = true
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                file("proguard-rules.pro")
+            )
+            signingConfig = signingConfigs.getByName("debug")
+            isCrunchPngs = false
+        }
+        debug {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
+            isCrunchPngs = false
+        }
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.4"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+        isCoreLibraryDesugaringEnabled = true
+    }
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.apply {
+            isFork = true
+            forkOptions.jvmArgs = listOf(
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED"
             )
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = freeCompilerArgs + listOf(
-            "-Xcontext-receivers",
-            "-opt-in=kotlin.RequiresOptIn"
-        )
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+    tasks.withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "21"
+            freeCompilerArgs += listOf(
+                "-Xjvm-default=all-compatibility",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xallow-result-return-type"
+            )
+        }
     }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            excludes += "/META-INF/gradle/incremental.annotation.processors"
         }
     }
 }
 
 dependencies {
-    // Core Android
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime)
-    implementation(libs.androidx.activity.compose)
-
-    // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-
-    // Hilt
+    coreLibraryDesugaring(libs.desugar)
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
 
-    // Desugaring
-    coreLibraryDesugaring(libs.android.desugar.jdk.libs)
+    implementation(platform(libs.compose.bom))
+    implementation("androidx.compose.material3:material3:1.3.2")
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.activity.compose)
+    implementation(libs.core.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.activity.ktx)
 
-    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation(libs.espresso.core)
+
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
