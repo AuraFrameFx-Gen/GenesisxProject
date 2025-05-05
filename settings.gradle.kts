@@ -20,6 +20,9 @@ pluginManagement {
 // Enable type-safe project accessors
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+// Enable version catalogs
+enableFeaturePreview("VERSION_CATALOGS")
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
@@ -30,20 +33,15 @@ dependencyResolutionManagement {
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://api.xposed.info/") }
     }
-
-    // Configure version catalogs
-    versionCatalogs {
-        create("libs") {
-            from(files("gradle/libs.versions.toml"))
-        }
-    }
 }
+
+// Version catalog is now defined in gradle/libs.versions.toml
+// and automatically loaded by Gradle
 
 rootProject.name = "AuraFrameFX"
 
 // Core application module
 include(":app")
-
 // Dynamic feature modules
 include(":visualization")
 // Library modules
