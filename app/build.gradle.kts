@@ -171,15 +171,54 @@ android {
 
     externalNativeBuild {
         cmake {
-            path = file("CMakeLists.txt")
+            path = file("src/main/cpp/CMakeLists.txt")
             version = "3.22.1"
         }
     }
 
-    ndkVersion = "25.2.9519653"
-
+    // JNI Libs directory
     sourceSets {
         getByName("main") {
+            jniLibs.srcDirs = ["src/main/jniLibs"]
+        }
+    }
+
+    // Configure ABI splits (optional)
+    splits {
+        abi {
+            enable true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            universalApk true
+        }
+    }
+
+    // Configure NDK version
+    ndkVersion = "25.2.9519653"
+
+    // Configure external native build
+    externalNativeBuild {
+        cmake {
+            cppFlags(
+                "-std=c++17",
+                "-fexceptions",
+                "-frtti",
+                "-fno-limit-debug-info"
+            )
+            arguments(
+                "-DANDROID_STL=c++_shared",
+                "-DANDROID_ARM_NEON=TRUE",
+                "-DANDROID_PLATFORM=android-21"
+            )
+        }
+    }
+
+    // Configure packaging options for native libraries
+    packaging {
+        jniLibs {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            pickFirsts += "**/libc++_shared.so"
+            keepDebugSymbols += "**/*.so"
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
@@ -311,20 +350,12 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
     // Concurrency
-    implementation(libs.androidx.work.runtime)
-    implementation(libs.androidx.concurrent.futures)
-    implementation(libs.guava)
-
-    // Event Bus
-    implementation(libs.eventbus)
-
-    // Dots Indicator
-    implementation(libs.dotsindicator)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.multidex)
 
     // Hilt for dependency injection
@@ -336,6 +367,11 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // WorkManager with Hilt support
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.compiler)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -379,7 +415,7 @@ dependencies {
     // Utility libraries
     implementation(libs.timber)
     implementation(libs.threetenabp)
-    
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
