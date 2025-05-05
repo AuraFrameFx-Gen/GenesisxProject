@@ -1,68 +1,29 @@
 [versions]
 androidGradlePlugin = "8.2.2"
-appengineGradlePlugin = "2.4.4"
-googleCloudAuth = "2.5.0"
-googleCloudLogging = "3.22.2"
-googleCloudMonitoring = "3.62.0"
-googleCloudRun = "2.1.1"
-googleCloudStorage = "2.52.1"
-googleCloudTrace = "2.61.0"
-googleCloudVertexai = "1.21.0"
-kotlin = "1.9.20"
-kotlinCoroutines = "1.10.2"
-compose-bom = "2025.04.01"
-desugar-jdk = "2.1.5"
-hilt = "2.56.2"
+kotlin = "2.0.0"
+composeBom = "2025.02.00"
 material3 = "1.3.2"
-serialization = "1.9.20"
+hilt = "2.56.2"
 junit = "4.13.2"
-androidx-test-ext-junit = "1.2.1"
-androidx-test-espresso-core = "3.6.1"
-navigation-compose = "2.8.9"
-leanback = "1.2.0"
-supportAnnotations = "28.0.0"
-googleCloudBom = "2.25.0"
-ksp = "1.9.20-1.0.14"
+desugarJdk = "2.0.4"
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.16.0" }
-androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.8.7" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.10.1" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
-androidx-material-icons-core = { group = "androidx.compose.material.icons", name = "material-icons-core" }
-androidx-material-icons-extended = { group = "androidx.compose.material.icons", name = "material-icons-extended" }
-androidx-material3-window = { group = "androidx.compose.material3", name = "material3-window-size-class" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.0" }
-appengine-gradle-plugin = { module = "com.google.cloud.tools:appengine-gradle-plugin", version.ref = "appengineGradlePlugin" }
-google-cloud-auth = { module = "com.google.cloud:google-cloud-auth", version.ref = "googleCloudAuth" }
-google-cloud-logging = { module = "com.google.cloud:google-cloud-logging", version.ref = "googleCloudLogging" }
-google-cloud-monitoring = { module = "com.google.cloud:google-cloud-monitoring", version.ref = "googleCloudMonitoring" }
-google-cloud-run = { module = "com.google.cloud:google-cloud-run", version.ref = "googleCloudRun" }
-google-cloud-storage = { module = "com.google.cloud:google-cloud-storage", version.ref = "googleCloudStorage" }
-google-cloud-trace = { module = "com.google.cloud:google-cloud-trace", version.ref = "googleCloudTrace" }
-google-cloud-vertexai = { module = "com.google.cloud:google-cloud-vertexai", version.ref = "googleCloudVertexai" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.12.0" }
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.6.2" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.8.2" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
-junit = { module = "junit:junit", version.ref = "junit" }
-androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
-androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-test-espresso-core" }
-android-desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar-jdk" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinCoroutines" }
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
-leanback = { group = "androidx.leanback", name = "leanback", version.ref = "leanback" }
-leanbackPreferences = { group = "androidx.leanback", name = "leanback-preferences", version = "1.0.0" }
-support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
+android-desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-hilt-android = { id = "com.google.dagger.hilt.android", version = "2.56.2" }
-ksp = { id = "com.google.devtools.ksp", version = "1.9.22-1.0.17" }
-cloud-tools = { id = "com.google.cloud.tools.appengine", version = "2.4.4" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.21" }

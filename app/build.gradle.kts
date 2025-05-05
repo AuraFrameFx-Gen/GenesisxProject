@@ -1,52 +1,47 @@
 plugins {
-    id("com.android.application") version "8.8.2" apply true
-    id("org.jetbrains.kotlin.android") version "1.9.20" apply true
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply true
-    id("com.google.dagger.hilt.android") version "2.56.2" apply true
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-        proguardFiles("proguard-rules.pro")
-        androidResources {
-            generateLocaleConfig = true
-        }
-        multiDexEnabled = true
+        vectorDrawables.useSupportLibrary = true
     }
 
-    configurations.all {
-        resolutionStrategy {
-            force("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
-            force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20")
-            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20")
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs = listOf(
+            "-Xuse-k2",
             "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.FlowPreview",
-            "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
         )
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
     }
 
     buildFeatures {
@@ -54,70 +49,27 @@ android {
         buildConfig = true
     }
 
-    packaging {
-        resources {
-            excludes += setOf(
-                "META-INF/**",
-                "**/*.kotlin_module",
-                "**/*.proto",
-                "**/*.txt",
-                "**/*.md",
-                "**/*.xml",
-                "**/*.properties"
-            )
-        }
-        jniLibs {
-            useLegacyPackaging = true
-        }
-        resources.pickFirsts += setOf(
-            "**/version.txt",
-            "**/version.properties"
-        )
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeBom.get()
     }
 }
 
 dependencies {
-    // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
-    // UI Components
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    debugImplementation(libs.androidx.ui.tooling)
-
-    // Core Android
-    debugImplementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.activity.compose)
 
-    // Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.core)
-
-    // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.8.1")
-
-    // Google Cloud Services (Reduced set)
-    implementation(platform("com.google.cloud:libraries-bom:2.24.0"))
-    implementation("com.google.cloud:google-cloud-storage:2.5.0")
-
-    // Java 8+ compatibility
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
-
-    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Desugaring
     coreLibraryDesugaring(libs.android.desugar.jdk.libs)
 }

@@ -75,5 +75,5 @@ fun lightColorScheme(): ColorScheme = ColorScheme(
     inverseOnSurface = LightInverseOnSurface,
     inverseSurface = LightInverseSurface,
     inversePrimary = LightInversePrimary
-    onSurface = NeonPurple
+            onSurface = NeonPurple
 )
