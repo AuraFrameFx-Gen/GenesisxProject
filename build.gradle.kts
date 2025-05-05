@@ -1,19 +1,29 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
+    // Core plugins
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.dynamicFeature) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.ksp) apply false
+    
+    // Dependency management plugins
+    id("com.github.ben-manes.versions") version "0.47.0"
 }
 
-// Apply common build script configuration
+// Apply common build script configurations
 apply(from = "gradle/dependencyConstraints.gradle.kts")
+apply(from = "gradle/dependencyUpdates.gradle.kts")
 
 // Configure all projects including the root project
 allprojects {
     // Apply common configuration
-    apply(plugin = "java-library")
+    plugins.withType(JavaPlugin::class) {
+        configure<JavaPluginExtension> {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
+    }
     
     repositories {
         google()
