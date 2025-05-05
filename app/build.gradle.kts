@@ -5,39 +5,49 @@ plugins {
     alias(libs.plugins.agp.app)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
-    id("com.google.devtools.ksp") version libs.versions.ksp.get()
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
+
         setProperty("archivesBaseName", "AuraFrameFX-v${versionName}")
         buildConfigField("int", "MIN_SDK_VERSION", "$minSdk")
 
+        // Enable multidex support
+        multiDexEnabled = true
+
+        // NDK configuration
         ndk {
-            // Specifies the ABI configurations of your native
-            // libraries Gradle should build and package with your APK.
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
 
+        // External native build configuration
         externalNativeBuild {
             cmake {
                 cppFlags("-std=c++17")
-                arguments("-DANDROID_STL=c++_shared")
+                arguments(
+                    "-DANDROID_STL=c++_shared",
+                    "-DANDROID_ARM_NEON=TRUE"
+                )
+                version = "3.22.1"
             }
         }
 
+        // Room schema location for KSP
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.incremental", "true")
+            arg("room.expandProjection", "true")
         }
     }
 
@@ -61,10 +71,13 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isCrunchPngs = false
-            proguardFiles("proguard-android-optimize.txt", "proguard.pro", "proguard-rules.pro")
+            isDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             applicationIdSuffix = ".debug"
             resValue("string", "derived_app_name", "AuraFrameFX (Debug)")
             signingConfig = releaseSigning
@@ -123,9 +136,37 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
         buildConfig = true
+        viewBinding = true
         aidl = true
+        renderScript = false
+        shaders = false
+    }
+
+    buildFeatures.compose = true
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/notice.txt"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/LICENSE.txt"
+            excludes += "META-INF/license.txt"
+            excludes += "META-INF/ASL2.0"
+            excludes += "META-INF/*.kotlin_module"
+            excludes += "META-INF/*.version"
+            excludes += "META-INF/proguard/*"
+            excludes += "META-INF/services/*"
+            excludes += "META-INF/licenses/*"
+            excludes += "META-INF/versions/9/previous-compilation-data.bin"
+        }
     }
 
     externalNativeBuild {
@@ -279,27 +320,19 @@ dependencies {
 
     // Dots Indicator
     implementation(libs.dotsindicator)
-
-    // Fading Edge Layout
-    implementation(libs.fadingedgelayout)
-
-    // Google Subject Segmentation - MLKit
-    standardImplementation(libs.com.google.android.gms.play.services.mlkit.subject.segmentation)
-    standardImplementation(libs.play.services.base)
-
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.multidex)
 
-    // Hilt
+    // Hilt for dependency injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.work)
-    ksp(libs.hilt.compiler)
 
-    // Room
+    // Room database
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
@@ -308,29 +341,60 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
-    // Lifecycle
+    // Lifecycle components
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.extensions)
 
-    // Navigation
+    // Navigation component
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // Xposed
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.runtime.livedata)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // Xposed framework
     compileOnly(libs.xposed.api)
 
-    // Other dependencies
-    implementation(libs.gson)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
+    // Image loading and processing
     implementation(libs.glide)
     ksp(libs.glide.compiler)
+    implementation(libs.glide.transformations)
 
+    // Networking
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
+    // JSON processing
+    implementation(libs.gson)
+
+    // Utility libraries
+    implementation(libs.timber)
+    implementation(libs.threetenabp)
+    
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.arch.core.testing)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.ext.truth)
+
+    // For instrumented tests
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
 }
 
 tasks.register("printVersionName") {
