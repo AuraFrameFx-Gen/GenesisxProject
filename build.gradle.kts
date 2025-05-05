@@ -1,11 +1,27 @@
-plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.hilt) apply false
-    alias(libs.plugins.navigation.safe.args) apply false
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.plugins.agp.get())
+        classpath(libs.plugins.kotlin.android)
+        classpath(libs.plugins.kotlin.parcelize)
+        classpath(libs.plugins.ksp)
+    }
 }
 
+// Configure all projects
 tasks.register("clean", Delete::class) {
-    delete(layout.buildDirectory)
+    delete(rootProject.buildDir)
+}
+
+// Configure all projects
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
 }

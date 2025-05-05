@@ -1,11 +1,11 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.agp.app)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.navigation.safe.args)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -17,99 +17,294 @@ android {
         minSdk = 31
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
+        setProperty("archivesBaseName", "AuraFrameFX-v${versionName}")
+        buildConfigField("int", "MIN_SDK_VERSION", "$minSdk")
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your APK.
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+
+        externalNativeBuild {
+            cmake {
+                cppFlags("-std=c++17")
+                arguments("-DANDROID_STL=c++_shared")
+            }
+        }
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
 
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        resValues = true
+    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    var releaseSigning = signingConfigs.getByName("debug")
+
+    try {
+        val keystoreProperties = Properties()
+        FileInputStream(keystorePropertiesFile).use { inputStream ->
+            keystoreProperties.load(inputStream)
+        }
+
+        releaseSigning = signingConfigs.create("release") {
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+            storePassword = keystoreProperties.getProperty("storePassword")
+        }
+    } catch (ignored: Exception) {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isCrunchPngs = false
+            proguardFiles("proguard-android-optimize.txt", "proguard.pro", "proguard-rules.pro")
+            applicationIdSuffix = ".debug"
+            resValue("string", "derived_app_name", "AuraFrameFX (Debug)")
+            signingConfig = releaseSigning
+        }
+
         release {
             isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                file("proguard-rules.pro")
-            )
-            signingConfig = signingConfigs.getByName("debug")
+            isShrinkResources = true
             isCrunchPngs = false
-        }
-        debug {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
-            isCrunchPngs = false
+            proguardFiles("proguard-android-optimize.txt", "proguard.pro", "proguard-rules.pro")
+            resValue("string", "derived_app_name", "AuraFrameFX")
+            signingConfig = releaseSigning
         }
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+    flavorDimensions += "distribution"
+
+    productFlavors {
+        create("standard") {
+            isDefault = true
+            dimension = "distribution"
+            resValue("string", "derived_app_name", "AuraFrameFX")
+        }
+
+        create("foss") {
+            dimension = "distribution"
+            applicationIdSuffix = ".foss"
+            resValue("string", "derived_app_name", "AuraFrameFX (FOSS)")
+        }
+    }
+
+    sourceSets {
+        getByName("standard") {
+            java.srcDirs("src/standard/java")
+        }
+
+        getByName("foss") {
+            java.srcDirs("src/foss/java")
+        }
+    }
+
+    if (hasProperty("splitApks")) {
+        splits {
+            abi {
+                isEnable = true
+                reset()
+                include("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+                isUniversalApk = false
+            }
+        }
+    }
+
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+        aidl = true
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("CMakeLists.txt")
+            version = "3.22.1"
+        }
+    }
+
+    ndkVersion = "25.2.9519653"
+
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
     }
 
-    tasks.withType<JavaCompile>().configureEach {
-        options.apply {
-            isFork = true
-            forkOptions.jvmArgs = listOf(
-                "--add-exports", "jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
-                "--add-exports", "jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
-                "--add-exports", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
-                "--add-exports", "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-                "--add-exports", "jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-                "--add-exports", "jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
-                "--add-exports", "jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED"
-            )
-        }
-    }
-
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "21"
-            freeCompilerArgs += listOf(
-                "-Xjvm-default=all-compatibility",
-                "-opt-in=kotlin.RequiresOptIn",
-                "-Xallow-result-return-type"
-            )
-        }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        jniLibs.excludes += setOf(
+            "/META-INF/*",
+            "/META-INF/versions/**",
+            "/org/bouncycastle/**",
+            "/kotlin/**",
+            "/kotlinx/**"
+        )
+
+        resources.excludes += setOf(
+            "/META-INF/*",
+            "/META-INF/versions/**",
+            "/org/bouncycastle/**",
+            "/kotlin/**",
+            "/kotlinx/**",
+            "rebel.xml",
+            "/*.txt",
+            "/*.bin",
+            "/*.json"
+        )
+
+        jniLibs.useLegacyPackaging = true
+    }
+
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
     }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-Xlint:-deprecation")
+}
+
+gradle.taskGraph.whenReady {
+    gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
+    gradle.startParameter.warningMode = WarningMode.Summary
+}
+
+val fossImplementation by configurations
+val standardImplementation by configurations
+
 dependencies {
-    coreLibraryDesugaring(libs.desugar)
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    // Kotlin
+    implementation(libs.androidx.core.ktx)
 
-    implementation(platform(libs.compose.bom))
-    implementation("androidx.compose.material3:material3:1.3.2")
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.activity.compose)
-    implementation(libs.core.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.activity.ktx)
+    // Data Binding
+    implementation(libs.library)
+    implementation(libs.androidx.palette.ktx)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    // Xposed API
+    // F-Droid disallow `api.xposed.info` since it's not a "Trusted Maven Repository".
+    // So we create a mirror GitHub repository and obtain the library from `jitpack.io` instead.
+    // Equivalent to `implementation 'de.robv.android.xposed:api:82'`.
+    compileOnly(libs.xposedbridge)
 
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.ui.test.manifest)
+    // The core module that provides APIs to a shell
+    implementation(libs.su.core)
+    // Optional: APIs for creating root services. Depends on ":core"
+    implementation(libs.su.service)
+    // Optional: Provides remote file system support
+    implementation(libs.su.nio)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Color Picker
+    implementation(libs.jaredrummler.colorpicker)
+
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
+
+    // Material Components
+    implementation(libs.material)
+
+    // APK Signer
+    implementation(libs.bcpkix.jdk18on)
+
+    // Zip Util
+    implementation(libs.zip4j)
+
+    // Preference
+    implementation(libs.androidx.preference.ktx)
+
+    // Remote Preference
+    implementation(libs.remotepreferences)
+
+    // Flexbox
+    implementation(libs.flexbox)
+
+    // Glide
+    implementation(libs.glide)
+    ksp(libs.glide.compiler)
+
+    // RecyclerView
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.recyclerview.selection)
+
+    // ViewPager2
+    implementation(libs.androidx.viewpager2)
+
+    // Circle Indicator
+    implementation(libs.circleindicator)
+
+    // Lottie Animation
+    implementation(libs.lottie)
+
+    // HTML Parser
+    implementation(libs.jsoup)
+
+    // Collapsing Toolbar with subtitle
+    implementation(libs.collapsingtoolbarlayout.subtitle)
+
+    // Navigation Component
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Concurrency
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.concurrent.futures)
+    implementation(libs.guava)
+
+    // Event Bus
+    implementation(libs.eventbus)
+
+    // Dots Indicator
+    implementation(libs.dotsindicator)
+
+    // Fading Edge Layout
+    implementation(libs.fadingedgelayout)
+
+    // Google Subject Segmentation - MLKit
+    standardImplementation(libs.com.google.android.gms.play.services.mlkit.subject.segmentation)
+    standardImplementation(libs.play.services.base)
+
+    // Blur View
+    implementation(libs.blurview)
+
+    // Misc
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.slf4j.api)
+    implementation(libs.commons.text)
+
+    // OkHttp
+    implementation(libs.okhttp)
+
+    // Room Database
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+}
+
+tasks.register("printVersionName") {
+    println(android.defaultConfig.versionName?.replace("-(Stable|Beta)".toRegex(), ""))
 }
