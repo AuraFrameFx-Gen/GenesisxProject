@@ -1,8 +1,27 @@
-// Basic settings.gradle.kts configuration
-rootProject.name = "AuraFrameFX"
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
 
-// Include the app module
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AuraFrameFX"
 include(":app")
+
+// Configure all projects
+allprojects {
+    group = "dev.aurakai.auraframefx"
+    version = "1.0.0"
+}
 
 // Include core modules
 include(":core:common")
