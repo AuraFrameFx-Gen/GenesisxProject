@@ -1,3 +1,6 @@
+// Enable features
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -15,6 +18,10 @@ dependencyResolutionManagement {
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     }
 }
+
+// Configure version catalogs
+// Note: The libs.versions.toml file is automatically loaded in Gradle 8.4+
+// No need for explicit versionCatalogs block
 
 rootProject.name = "AuraFrameFX"
 
