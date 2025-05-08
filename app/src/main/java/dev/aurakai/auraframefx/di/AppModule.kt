@@ -17,18 +17,18 @@ object AppModule {
     @Provides
     @Singleton
     fun provideApplicationContext(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): Context = context
 
     @Provides
     @Singleton
     fun provideSharedPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     @Provides
     @Singleton
     fun provideAppInitializer(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): AppInitializer = AppInitializer(context)
 }

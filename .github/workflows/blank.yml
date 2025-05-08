@@ -5,8 +5,8 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "lodash"
-        update-types: ["version-update:semver-minor"]
-  
+        update-types: [ "version-update:semver-minor" ]
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -15,33 +15,33 @@ updates:
       - "actions"
     ignore:
       - dependency-name: "actions/checkout"
-        update-types: ["version-update:semver-patch"]
+        update-types: [ "version-update:semver-patch" ]
 
   - package-ecosystem: "npm"
     directory: "/"
     groups:
       security:
-        patterns: ["*"]
-        update-types: ["security-updates"]
+        patterns: [ "*" ]
+        update-types: [ "security-updates" ]
         updates:-package-ecosystem: "npm"
         directory: "all"
     schedule:
-        interval: "daily"
+      interval: "daily"
     ignore:
     -dependency-name: "lodash"
-  - update-types: ["version-update:semver-minor"]
+  - update-types: [ "version-update:semver-minor" ]
   - package-ecosystem: "github-actions"
     directory: "all"
     schedule:
-        interval: "weekly"
-        lbels:
+      interval: "weekly"
+      lbels:
         - "actions"
-        ignore:
+      ignore:
   - dependency-name: "actions/checkout"
-    update-types: ["version-update:semver-patch"]
+    update-types: [ "version-update:semver-patch" ]
   - package-ecosystem: "npm"
     directory: "all"
     groups:
-          security:
-          patterns: ["*"]
-     update-types: ["security-updates"]
+      security:
+      patterns: [ "*" ]
+      update-types: [ "security-updates" ]

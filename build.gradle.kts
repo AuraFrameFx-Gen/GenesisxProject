@@ -4,117 +4,74 @@ buildscript {
         google()
         mavenCentral()
     }
+
     dependencies {
-        classpath(libs.plugins.agp.get())
-        classpath(libs.plugins.kotlin.android)
-        classpath(libs.plugins.kotlin.parcelize)
-        classpath(libs.plugins.ksp)
-        classpath(libs.plugins.hilt.android)
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle.kts files
+        classpath("com.android.tools.build:gradle:8.8.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.56.2")
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
 
-// Configure all projects
-tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+plugins {
+    alias(libs.plugins.agp.app) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.gms) apply false
 }
 
-// Configure all projects
+// Clean task to delete the build directory
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
+}
+
+// Configure all projects with common settings
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
+    // Configure Kotlin compiler options for all projects
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "17"
+            freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all"
+            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+        }
     }
 
-    // Configure all projects with common settings
-    afterEvaluate {
-        if (plugins.hasPlugin("com.android.application") ||
-            plugins.hasPlugin("com.android.library") ||
-            plugins.hasPlugin("com.android.dynamic-feature")
-        ) {
+    // Configure Java compilation options for all projects
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+        options.release.set(17)
+    }
 
-            // Configure Android specific settings
-            extensions.configure<com.android.build.gradle.BaseExtension> {
-                compileSdkVersion(34)
-
-                defaultConfig {
-                    minSdk = 31
-                    targetSdk = 34
-
-                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-                    // Enable vector drawable support
-                    vectorDrawables.useSupportLibrary = true
-                }
-
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
-                }
-
-                kotlinOptions {
-                    jvmTarget = JavaVersion.VERSION_17.toString()
-                    freeCompilerArgs = freeCompilerArgs + listOf(
-                        "-opt-in=kotlin.RequiresOptIn",
-                        "-Xjvm-default=all"
-                    )
-                }
-
-                // Enable view binding
-                buildFeatures {
-                    viewBinding = true
-                    buildConfig = true
-                }
-
-                // Enable data binding
-                buildFeatures.dataBinding = true
-
-                // Packaging options
-                packaging {
-                    resources {
-                        excludes += "/META-INF/{AL2.0,LGPL2.1}"
-                        excludes += "META-INF/DEPENDENCIES"
-                        excludes += "META-INF/INDEX.LIST"
-                        excludes += "META-INF/NOTICE"
-                        excludes += "META-INF/NOTICE.txt"
-                        excludes += "META-INF/notice.txt"
-                        excludes += "META-INF/LICENSE"
-                        excludes += "META-INF/LICENSE.txt"
-                        excludes += "META-INF/license.txt"
-                        excludes += "META-INF/ASL2.0"
-                        excludes += "META-INF/*.kotlin_module"
-                        excludes += "META-INF/*.version"
-                    }
-                }
-            }
+    // Configure NDK version for all Android projects
+    pluginManager.withPlugin("com.android.application") {
+        project.extensions.getByType<com.android.build.gradle.BaseExtension>().apply {
+            ndkVersion = "26.1.10909125"
         }
     }
 }
 
-// Task to print project dependencies
+// Task to print project dependencies (optional)
 tasks.register("printDependencies") {
     group = "help"
     description = "Print project dependencies"
     doLast {
         rootProject.allprojects.forEach { project ->
             println("\nProject: ${project.name}")
-            println("-------------------")
-            project.configurations
-                .filter { it.isCanBeResolved }
-                .forEach { configuration ->
-                    try {
-                        println("\nConfiguration: ${configuration.name}")
-                        configuration.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-                            println("- ${artifact.moduleVersion.id}")
-                        }
-                    } catch (e: Exception) {
-                        // Ignore configurations that can't be resolved
+            println("-".repeat(50))
+            project.configurations.filter { it.isCanBeResolved }.forEach { configuration ->
+                try {
+                    println("\nConfiguration: ${configuration.name}")
+                    configuration.resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
+                        println("- ${artifact.moduleVersion.id}")
                     }
+                } catch (e: Exception) {
+                    println("Error resolving configuration ${configuration.name}: ${e.message}")
                 }
+            }
         }
     }
 }
+

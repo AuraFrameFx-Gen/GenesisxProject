@@ -18,7 +18,7 @@ object WorkManagerModule {
     @Provides
     @Singleton
     fun provideWorkManagerConfiguration(
-        workerFactory: HiltWorkerFactory
+        workerFactory: HiltWorkerFactory,
     ): Configuration = Configuration.Builder()
         .setMinimumLoggingLevel(android.util.Log.INFO)
         .setWorkerFactory(workerFactory)
@@ -28,7 +28,7 @@ object WorkManagerModule {
     @Singleton
     fun provideWorkManager(
         @ApplicationContext context: Context,
-        configuration: Configuration
+        configuration: Configuration,
     ): WorkManager {
         WorkManager.initialize(context, configuration)
         return WorkManager.getInstance(context)

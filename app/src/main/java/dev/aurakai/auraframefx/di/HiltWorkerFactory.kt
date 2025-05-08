@@ -18,7 +18,7 @@ object WorkerModule {
     @Singleton
     fun provideHiltWorkerFactory(
         @ApplicationContext context: Context,
-        workerFactory: HiltWorkerFactory
+        workerFactory: HiltWorkerFactory,
     ): Configuration.Provider = object : Configuration.Provider {
         override fun getWorkManagerConfiguration(): Configuration =
             Configuration.Builder()

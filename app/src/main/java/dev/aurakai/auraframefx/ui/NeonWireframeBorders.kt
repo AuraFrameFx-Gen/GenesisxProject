@@ -1,125 +1,70 @@
 package dev.aurakai.auraframefx.ui
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.*
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import dev.aurakai.auraframefx.ui.theme.NeonPink
-import dev.aurakai.auraframefx.ui.theme.NeonPurple
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NeonWireframeCard(
+fun NeonWireframeBorder(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    color: Color = Color.Cyan,
+    stroke: Dp = 4.dp,
 ) {
-    Card(
-        modifier = modifier
-            .shadow(
-                elevation = 8.dp,
-                ambientColor = NeonPurple,
-                spotColor = NeonPink
-            ),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Black,
-            contentColor = NeonPurple
-        ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .border(
-                    width = 1.dp,
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            NeonPurple.copy(alpha = 0.2f),
-                            NeonPink.copy(alpha = 0.2f)
-                        )
-                    ),
-                    shape = RoundedCornerShape(16.dp)
-                )
-        ) {
-            content()
+    Canvas(modifier.fillMaxSize()) {
+        val w = size.width
+        val h = size.height
+        // Top border with circuit lines
+        drawLine(color, Offset(0f, 0f), Offset(w, 0f), strokeWidth = stroke.toPx())
+        drawLine(color, Offset(0f, 0f), Offset(0f, h), strokeWidth = stroke.toPx())
+        drawLine(color, Offset(w, 0f), Offset(w, h), strokeWidth = stroke.toPx())
+        drawLine(color, Offset(0f, h), Offset(w, h), strokeWidth = stroke.toPx())
+        // Decorative: left circuit corner
+        drawCircle(
+            color = color,
+            radius = 12f,
+            center = Offset(0f, h * 0.9f),
+            style = Stroke(width = stroke.toPx())
+        )
+        drawLine(
+            color,
+            Offset(0f, h * 0.9f),
+            Offset(w * 0.12f, h * 0.9f),
+            strokeWidth = stroke.toPx()
+        )
+        // Decorative: right circuit bar
+        drawLine(
+            color,
+            Offset(w, h * 0.2f),
+            Offset(w * 0.7f, h * 0.2f),
+            strokeWidth = stroke.toPx()
+        )
+        // Decorative: bottom left angled lines
+        drawLine(
+            color,
+            Offset(w * 0.04f, h),
+            Offset(w * 0.13f, h * 0.85f),
+            strokeWidth = stroke.toPx()
+        )
+        drawLine(
+            color,
+            Offset(w * 0.13f, h * 0.85f),
+            Offset(w * 0.23f, h),
+            strokeWidth = stroke.toPx()
+        )
+        // Decorative: bottom right ticks
+        for (i in 0..4) {
+            drawLine(
+                color,
+                Offset(w * 0.8f + i * 10f, h),
+                Offset(w * 0.8f + i * 10f, h - 12f),
+                strokeWidth = stroke.toPx()
+            )
         }
     }
-}
-
-@Composable
-fun NeonWireframeButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier
-            .border(
-                width = 1.dp,
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        NeonPurple.copy(alpha = 0.2f),
-                        NeonPink.copy(alpha = 0.2f)
-                    )
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Black,
-            contentColor = NeonPurple
-        )
-    ) {
-        Text(text = text)
-    }
-}
-
-@Composable
-fun NeonWireframeText(
-    text: String,
-    modifier: Modifier = Modifier,
-    style: TextStyle = MaterialTheme.typography.bodyLarge,
-) {
-    Text(
-        text = text,
-        modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                color = NeonPurple.copy(alpha = 0.2f)
-            )
-            .border(
-                width = 1.dp,
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        NeonPurple.copy(alpha = 0.2f),
-                        NeonPink.copy(alpha = 0.2f)
-                    )
-                )
-            ),
-        style = style
-    )
-}
-
-@Composable
-fun NeonWireframeDivider(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .height(1.dp)
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        NeonPurple.copy(alpha = 0.2f),
-                        NeonPink.copy(alpha = 0.2f)
-                    )
-                )
-            )
-    )
 }

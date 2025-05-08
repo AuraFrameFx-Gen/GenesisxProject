@@ -1,60 +1,44 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
--keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
+# Keep important attributes for debugging
+-keepattributes SourceFile,LineNumberTable,Signature,*Annotation*,InnerClasses
 -renamesourcefileattribute SourceFile
 
 # Kotlin
--assumenosideeffects class kotlin.jvm.internal.Intrinsics {
-    public static void check*(...);
-    public static void throw*(...);
+-keep class kotlin.Metadata { *; }
+-keep class kotlin.coroutines.** { *; }
+-keep class kotlinx.coroutines.** { *; }
+
+# Keep Hilt generated code
+-keep class * extends dagger.hilt.android.Hilt_* { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ActivityComponentManager { *; }
+-keep class * extends dagger.hilt.android.internal.managers.FragmentComponentManager { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ServiceComponentManager { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }
+
+# Keep ViewModels
+-keep class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
 }
--assumenosideeffects class java.util.Objects {
-    public static ** requireNonNull(...);
-}
 
-# Strip debug log
--assumenosideeffects class android.util.Log {
-    public static int v(...);
-    public static int d(...);
-}
+# Keep Room
+-keep class * extends androidx.room.RoomDatabase
+-keep class * extends androidx.room.Entity
+-keep class * extends androidx.room.Dao
+-keep class * extends androidx.room.TypeConverter
 
-# Activity and Fragment names
--keep class dev.aurakai.auraframefx.ui.activities.**
--keep class dev.aurakai.auraframefx.ui.fragments.**
-
-# Keep Hilt classes
--keep class dagger.* { *; }
--keep class * extends dagger.* { *; }
--keep class * extends dagger.internal.* { *; }
--keep class * extends dagger.internal.codegen.* { *; }
--keep class * extends dagger.internal.codegen.binding.* { *; }
--keep class * extends dagger.internal.codegen.component.* { *; }
--keep class * extends dagger.internal.codegen.model.* { *; }
--keep class * extends dagger.internal.codegen.writing.* { *; }
-
-# Keep Compose classes
--keep class androidx.compose.runtime.* { *; }
--keep class androidx.compose.ui.* { *; }
--keep class androidx.compose.foundation.* { *; }
--keep class androidx.compose.material.* { *; }
--keep class androidx.compose.material3.* { *; }
-
-# Xposed
--keep class de.robv.android.xposed.**
--keep class dev.aurakai.auraframefx.xposed.InitHook
+# Keep Xposed
+-keep class de.robv.android.xposed.** { *; }
+-keep class dev.aurakai.auraframefx.xposed.** { *; }
 -keepnames class dev.aurakai.auraframefx.xposed.**
 -keepnames class dev.aurakai.auraframefx.xposed.utils.XPrefs
 -keep class dev.aurakai.auraframefx.xposed.** {
     <init>(android.content.Context);
 }
 
+# Keep Retrofit
+-keep class retrofit2.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
 # Keep ViewModel classes
 -keep class androidx.lifecycle.* { *; }
 -keep class androidx.lifecycle.ViewModel { *; }

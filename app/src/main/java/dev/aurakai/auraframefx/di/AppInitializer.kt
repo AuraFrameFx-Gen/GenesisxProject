@@ -16,16 +16,16 @@ import javax.inject.Singleton
  */
 @Singleton
 class AppInitializer @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
     fun initialize(application: Application) {
         Timber.d("Initializing application components...")
-        
+
         // Initialize components
         initializeNativeLibraries()
         initializeCrashReporting()
         initializeAnalytics()
-        
+
         Timber.d("Application components initialized successfully")
     }
 

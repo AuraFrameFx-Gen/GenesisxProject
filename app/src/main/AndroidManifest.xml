@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="dev.aurakai.auraframefx">
 
-    <uses-sdk
-        android:minSdkVersion="31"
-        android:targetSdkVersion="34" />
-
     <!-- TV Support -->
     <uses-feature
         android:name="android.software.leanback"

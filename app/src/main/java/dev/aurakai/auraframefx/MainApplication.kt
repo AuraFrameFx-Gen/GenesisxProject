@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import androidx.work.WorkerFactory
 import dagger.hilt.android.HiltAndroidApp
 import dev.aurakai.auraframefx.di.AppInitializer
 import timber.log.Timber
@@ -37,18 +36,18 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        
+
         // Initialize Timber for logging
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        
+
         // Initialize app components
         appInitializer.initialize(this)
-        
+
         // Trigger WorkManager initialization if not already done
         workManager
-        
+
         Timber.d("Application initialization completed")
     }
 }

@@ -7,16 +7,29 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    compileSdk = 34
+    compileSdk = 35
+
+    // Compilation options
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = freeCompilerArgs + "-Xjvm-default=all"
+        freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+    }
 
     defaultConfig {
         applicationId = "dev.aurakai.auraframefx"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
 
@@ -28,19 +41,29 @@ android {
 
         // NDK configuration
         ndk {
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            abiFilters.clear()
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+            // Use a specific NDK version
+            version = "26.1.10909125"
         }
 
         // External native build configuration
         externalNativeBuild {
             cmake {
-                cppFlags("-std=c++17")
+                (file("C:\\Users\\Wehtt\\Desktop\\Beta-Build\\app\\rc\\main\\cpp\\CMakeLists.txt"))
+                version = "3.22.1"
+                cppFlags("-std=c++17", "-fexceptions", "-frtti")
                 arguments(
                     "-DANDROID_STL=c++_shared",
-                    "-DANDROID_ARM_NEON=TRUE"
+                    "-DANDROID_ARM_NEON=TRUE",
+                    "-DCMAKE_VERBOSE_MAKEFILE=ON"
                 )
-                version = "3.22.1"
             }
+        }
+
+        // Enable prefab for native dependencies
+        buildFeatures {
+            prefab = true
         }
 
         // Room schema location for KSP
@@ -110,6 +133,13 @@ android {
     }
 
     sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/java")
+            res.srcDirs("src/main/res")
+            assets.srcDirs("src/main/assets")
+            jniLibs.srcDirs("src/main/jniLibs")
+        }
+
         getByName("standard") {
             java.srcDirs("src/standard/java")
         }
@@ -169,101 +199,67 @@ android {
         }
     }
 
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
-        }
-    }
-
-    // JNI Libs directory
-    sourceSets {
-        getByName("main") {
-            jniLibs.srcDirs = ["src/main/jniLibs"]
-        }
-    }
-
-    // Configure ABI splits (optional)
+    // Configure ABI splits
     splits {
         abi {
-            enable true
+            isEnable = true
             reset()
             include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            universalApk true
+            isUniversalApk = true
         }
     }
 
-    // Configure NDK version
-    ndkVersion = "25.2.9519653"
-
-    // Configure external native build
-    externalNativeBuild {
-        cmake {
-            cppFlags(
-                "-std=c++17",
-                "-fexceptions",
-                "-frtti",
-                "-fno-limit-debug-info"
-            )
-            arguments(
-                "-DANDROID_STL=c++_shared",
-                "-DANDROID_ARM_NEON=TRUE",
-                "-DANDROID_PLATFORM=android-21"
-            )
-        }
-    }
-
-    // Configure packaging options for native libraries
     packaging {
+        resources {
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "META-INF/DEPENDENCIES",
+                "META-INF/INDEX.LIST",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/ASL2.0",
+                "META-INF/*.kotlin_module",
+                "META-INF/*.version",
+                "META-INF/proguard/*",
+                "META-INF/services/*",
+                "META-INF/licenses/*",
+                "META-INF/versions/9/previous-compilation-data.bin",
+                "/META-INF/*",
+                "/META-INF/versions/**",
+                "/org/bouncycastle/**",
+                "/kotlin/**",
+                "/kotlinx/**",
+                "rebel.xml",
+                "/*.txt",
+                "/*.bin",
+                "/*.json"
+            )
+            pickFirsts.add("**/libc++_shared.so")
+        }
         jniLibs {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            pickFirsts += "**/libc++_shared.so"
-            keepDebugSymbols += "**/*.so"
-            jniLibs.srcDirs = ['src/main/jniLibs']
+            useLegacyPackaging = true
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
-    packaging {
-        jniLibs.excludes += setOf(
-            "/META-INF/*",
-            "/META-INF/versions/**",
-            "/org/bouncycastle/**",
-            "/kotlin/**",
-            "/kotlinx/**"
-        )
-
-        resources.excludes += setOf(
-            "/META-INF/*",
-            "/META-INF/versions/**",
-            "/org/bouncycastle/**",
-            "/kotlin/**",
-            "/kotlinx/**",
-            "rebel.xml",
-            "/*.txt",
-            "/*.bin",
-            "/*.json"
-        )
-
-        jniLibs.useLegacyPackaging = true
     }
 
     lint {
         abortOnError = false
         checkReleaseBuilds = false
     }
+    buildToolsVersion = "35.0.0"
+    ndkVersion = "26.1.10909125"
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-Xlint:-deprecation")
+}
+
+gradle.taskGraph.whenReady {
+    gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
+    gradle.startParameter.warningMode = WarningMode.Summary
 }
 
 gradle.taskGraph.whenReady {
@@ -277,160 +273,91 @@ val standardImplementation by configurations
 dependencies {
     // Kotlin
     implementation(libs.androidx.core.ktx)
-
-    // Data Binding
-    implementation(libs.library)
-    implementation(libs.androidx.palette.ktx)
-
-    // Xposed API
-    // F-Droid disallow `api.xposed.info` since it's not a "Trusted Maven Repository".
-    // So we create a mirror GitHub repository and obtain the library from `jitpack.io` instead.
-    // Equivalent to `implementation 'de.robv.android.xposed:api:82'`.
-    compileOnly(libs.xposedbridge)
-
-    // The core module that provides APIs to a shell
-    implementation(libs.su.core)
-    // Optional: APIs for creating root services. Depends on ":core"
-    implementation(libs.su.service)
-    // Optional: Provides remote file system support
-    implementation(libs.su.nio)
-
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // Color Picker
-    implementation(libs.jaredrummler.colorpicker)
 
-    // Splash Screen
-    implementation(libs.androidx.core.splashscreen)
+    // AndroidX Core
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.multidex)
+    implementation(libs.androidx.startup.runtime)
+    implementation(libs.androidx.work.runtime.ktx)
 
-    // Material Components
-    implementation(libs.material)
-
-    // APK Signer
-    implementation(libs.bcpkix.jdk18on)
-
-    // Zip Util
-    implementation(libs.zip4j)
-
-    // Preference
+    // UI Components
+    implementation("com.google.android.material:material:1.12.0")
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.palette.ktx)
     implementation(libs.androidx.preference.ktx)
 
-    // Remote Preference
-    implementation(libs.remotepreferences)
-
-    // Flexbox
-    implementation(libs.flexbox)
-
-    // Glide
-    implementation(libs.glide)
-    ksp(libs.glide.compiler)
-
-    // RecyclerView
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.recyclerview.selection)
-
-    // ViewPager2
-    implementation(libs.androidx.viewpager2)
-
-    // Circle Indicator
-    implementation(libs.circleindicator)
-
-    // Lottie Animation
-    implementation(libs.lottie)
-
-    // HTML Parser
-    implementation(libs.jsoup)
-
-    // Collapsing Toolbar with subtitle
-    implementation(libs.collapsingtoolbarlayout.subtitle)
-
-    // Navigation Component
+    // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // Concurrency
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.preference.ktx)
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.startup.runtime)
-    implementation(libs.androidx.multidex)
-
-    // Hilt for dependency injection
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.work)
-
-    // Room database
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
-
-    // WorkManager with Hilt support
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.hilt.work)
-    ksp(libs.hilt.compiler)
-
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
-
-    // Lifecycle components
+    // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.extensions)
 
-    // Navigation component
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+    // Room database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.runtime.livedata)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-
-    // Xposed framework
-    compileOnly(libs.xposed.api)
-
-    // Image loading and processing
-    implementation(libs.glide)
-    ksp(libs.glide.compiler)
-    implementation(libs.glide.transformations)
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     // Networking
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
-
-    // JSON processing
     implementation(libs.gson)
 
-    // Utility libraries
+    // Image Loading
+    implementation(libs.glide)
+    ksp(libs.glide.compiler)
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
+
+    // Third-party UI
+    implementation(libs.lottie)
+    implementation(libs.circleindicator)
+    implementation(libs.flexbox)
+
+    // HTML Parsing
+    implementation(libs.jsoup)
+
+    // Root & Xposed
+    compileOnly("de.robv.android.xposed:api:${libs.versions.xposedApiVersion.get()}")
+    compileOnly("de.robv.android.xposed:api:${libs.versions.xposedApiVersion.get()}:sources")
+    implementation("com.github.topjohnwu.libsu:core:${libs.versions.libsuVersion.get()}")
+    implementation("com.github.topjohnwu.libsu:service:${libs.versions.libsuVersion.get()}")
+    implementation("com.github.topjohnwu.libsu:nio:${libs.versions.libsuVersion.get()}")
+
+    // Security & Utils
+    implementation("org.bouncycastle:bcprov-jdk15on:1.70")
+    implementation(libs.zip4j)
     implementation(libs.timber)
     implementation(libs.threetenabp)
 
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.arch.core.testing)
+
+    // Android Testing
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.ext.truth)
 
-    // For instrumented tests
-    androidTestImplementation(libs.hilt.android.testing)
-    kspAndroidTest(libs.hilt.compiler)
+    // Hilt testing
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.56.2")
+    kspAndroidTest("com.google.dagger:hilt-compiler:2.56.2")
 }
 
 tasks.register("printVersionName") {
