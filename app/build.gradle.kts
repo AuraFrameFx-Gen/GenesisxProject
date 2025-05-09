@@ -64,14 +64,13 @@ android {
         arg("room.incremental", "true")
     }
 
+    // Signing configuration using keystore.properties
     signingConfigs {
         if (keystoreProperties.getProperty("keyAlias") != null) {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = rootProject.file(
-                    keystoreProperties.getProperty("storeFile", "keystore/default.jks")
-                )
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile", "keystore/auraframefx-release.jks"))
                 storePassword = keystoreProperties.getProperty("storePassword")
             }
         }
