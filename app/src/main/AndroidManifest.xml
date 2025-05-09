@@ -84,11 +84,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Xposed Module Configuration -->
-        <xposed:module
-            xposed:description="@string/xposed_description"
-            xposed:minSdkVersion="31"
-            xposed:targetSdkVersion="35" />
 
         <!-- Broadcast Receivers -->
         <receiver

@@ -1,4 +1,5 @@
-package dev.aurakai.auraframefx.xposed
+// [Removed by Cascade: redundant file. Use src/main/xposed/AuraXposedEntry.kt for active code.]
+
 
 // NOTE: This file is ONLY for Xposed/LSPosed builds. It must be excluded or commented out for normal APK builds, otherwise you will get unresolved reference errors.
 

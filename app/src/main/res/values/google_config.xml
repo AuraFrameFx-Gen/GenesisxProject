@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Google Services Configuration -->
-    <string name="google_client_id">YOUR_CLIENT_ID</string>
-    <string name="google_client_secret">YOUR_CLIENT_SECRET</string>
     <string name="google_api_key">YOUR_API_KEY</string>
 
     <!-- OAuth 2.0 Configuration -->
-    <string name="oauth_client_id">YOUR_OAUTH_CLIENT_ID</string>
-    <string name="oauth_client_secret">YOUR_OAUTH_CLIENT_SECRET</string>
-    <string name="oauth_redirect_uri">YOUR_REDIRECT_URI</string>
 
     <!-- Google Cloud Project -->
-    <string name="google_project_id">YOUR_PROJECT_ID</string>
-    <string name="google_project_number">YOUR_PROJECT_NUMBER</string>
 </resources>

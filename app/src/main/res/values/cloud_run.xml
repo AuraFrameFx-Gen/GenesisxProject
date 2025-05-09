@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Cloud Run service URLs -->
-    <string name="cloud_run_auth_service">https://auth-service-1234567890-abcd-1234567890abcdef-uc.a.run.app</string>
-    <string name="cloud_run_storage_service">https://storage-service-1234567890-abcd-1234567890abcdef-uc.a.run.app</string>
-    <string name="cloud_run_ml_service">https://ml-service-1234567890-abcd-1234567890abcdef-uc.a.run.app</string>
 
     <!-- Cloud Run credentials -->
-    <string name="cloud_run_client_id">your-client-id.apps.googleusercontent.com</string>
-    <string name="cloud_run_client_secret">your-client-secret</string>
 
     <!-- Cloud Storage bucket -->
-    <string name="cloud_storage_bucket">your-project-id.appspot.com</string>
 </resources>

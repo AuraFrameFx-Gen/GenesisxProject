@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AuraFrameFX</string>
-    <string name="app_description">AuraFrameFX - Advanced System Customization</string>
-    <string name="xposed_description">AuraFrameFX - Advanced System Customization</string>
-    <string name="default_notification_channel_id">default_notification_channel</string>
-    <string name="default_notification_channel_name">AuraFrameFX Notifications</string>
-    <string name="default_notification_channel_description">Notifications for AuraFrameFX</string>
 </resources>

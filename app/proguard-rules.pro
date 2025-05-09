@@ -40,39 +40,26 @@
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
 # Keep ViewModel classes
--keep class androidx.lifecycle.* { *; }
--keep class androidx.lifecycle.ViewModel { *; }
-
-# Keep Hilt ViewModel injection
--keep class * extends androidx.lifecycle.ViewModel {
-    <init>(...);
-}
-
-# Keep navigation classes
--keep class androidx.navigation.* { *; }
--keep class androidx.navigation.fragment.* { *; }
--keep class androidx.navigation.ui.* { *; }
-
-# Keep Coroutines classes
--keep class kotlinx.coroutines.* { *; }
--keep class kotlinx.coroutines.flow.* { *; }
-
-# Keep Room classes
--keep class androidx.room.* { *; }
--keep class * extends androidx.room.RoomDatabase { *; }
--keep class * extends androidx.room.RoomDatabase$Builder { *; }
-
-# Keep Retrofit classes
--keep class retrofit2.* { *; }
--keep class okhttp3.* { *; }
-
-# Keep OkHttp classes
--keep class okhttp3.* { *; }
--keep interface okhttp3.* { *; }
-
-# Keep Gson classes
--keep class com.google.gson.* { *; }
--keep class com.google.gson.stream.* { *; }
+# The following broad -keep rules for common libraries are commented out to allow R8 to optimize and shrink unused code.
+# -keep class androidx.lifecycle.* { *; }
+# -keep class androidx.lifecycle.ViewModel { *; }
+# -keep class * extends androidx.lifecycle.ViewModel {
+#     <init>(...);
+# }
+# -keep class androidx.navigation.* { *; }
+# -keep class androidx.navigation.fragment.* { *; }
+# -keep class androidx.navigation.ui.* { *; }
+# -keep class kotlinx.coroutines.* { *; }
+# -keep class kotlinx.coroutines.flow.* { *; }
+# -keep class androidx.room.* { *; }
+# -keep class * extends androidx.room.RoomDatabase { *; }
+# -keep class * extends androidx.room.RoomDatabase$Builder { *; }
+# -keep class retrofit2.* { *; }
+# -keep class okhttp3.* { *; }
+# -keep class okhttp3.* { *; }
+# -keep interface okhttp3.* { *; }
+# -keep class com.google.gson.* { *; }
+# -keep class com.google.gson.stream.* { *; }
 
 # EventBus
 -keepattributes *Annotation*

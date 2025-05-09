@@ -1,7 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="google_oauth_client_id">oauth905643639467-dlseaflf0pm0s6c9v16p5nm9si2r0u66.apps.googleusercontent.com</string>
-    <string name="google_oauth_client_secret">YOUR_CLIENT_SECRET</string>
-    <string name="google_oauth_redirect_uri">com.aurakai.auraframefx:/oauth2redirect</string>
-    <string name="google_oauth_scope">https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile</string>
-</resources>
+<resources></resources>

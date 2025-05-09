@@ -1,211 +1,162 @@
 [versions]
-# --- Build Plugins ---
-# Use recent stable versions. Ensure these match top-level build.gradle.kts plugin versions.
-agp = "8.4.2"
-kotlin = "2.1.20"
-ksp = "2.1.10-1.0.31" # Version aligned with kotlin version
-hiltPlugin = "2.56.2" # Use consistent Hilt version
+agp = "8.8.2"
+kotlin = "1.9.22"
+ksp = "1.9.22-1.0.17"
+hiltPlugin = "2.51.1"
 gmsPlugin = "4.4.2"
-# Parcelize version should match Kotlin version, but often the plugin is applied by ID without version here.
+composeCompiler = "1.5.8"
 
-# --- AndroidX Libraries ---
-appcompat = "1.7.0"
-constraintlayout = "2.2.1" # Stable, check if needed for Compose
 coreKtx = "1.16.0"
-coreSplashscreen = "1.0.1"
-preferenceKtx = "1.2.1"
-workRuntime = "2.10.1" # Check latest stable
-lifecycle = "2.9.0" # Consistent Lifecycle versions
-navigation = "2.8.9" # Stable Navigation Component version (check latest)
-room = "2.7.1" # Stable Room version
-startup = "1.2.0" # Stable Startup version
+activityKtx = "1.10.1"
+appcompat = "1.7.0"
+constraintlayout = "2.2.1"
 multidex = "2.0.1"
-# Testing
-androidxJunit = "1.2.1"
-espressoCore = "3.6.1"
-androidxTestCore = "1.6.1" # Check latest
-androidxArchCoreTesting = "2.2.0"
-androidxTestRunner = "1.6.1" # Check latest
-androidxTestRules = "1.6.1" # Check latest
-androidxTestExtTruth = "1.6.0" # Check latest
-
-# --- UI Libraries ---
+startup = "1.2.0"
+workRuntime = "2.10.1"
+preferenceKtx = "1.2.1"
+paletteKtx = "1.0.0"
+recyclerview = "1.4.0"
+viewpager2 = "1.1.0"
 material = "1.12.0"
-# blurview = "1.6.6" # Example, check library for latest version
-circleindicator = "2.1.6" # Keep if used
-# collapsingtoolbarlayoutSubtitle = "..." # Check if used and latest version
-# colorpickerVersion = "..." # Check if used and latest version
-dotsindicator = "5.0" # Check if used and latest version
-# fadingedgelayout = "1.0.0" # Check if used
-flexbox = "3.0.0" # Keep if used
-viewpager2 = "1.1.0" # Keep if used
-recyclerview = "1.3.2" # Stable, check if needed for Compose
-# recyclerviewSelection = "1.1.0" # Check if used
 
-# --- Compose ---
-# Use latest stable BOM
+lifecycle = "2.9.0"
+navigation = "2.9.0"
+room = "2.7.1"
+
 composeBom = "2025.05.00"
-# Compose Compiler version is set in app/build.gradle.kts based on Kotlin version
+activityCompose = "1.10.1"
 
-# --- Networking ---
-okhttp = "4.12.0" # OkHttp3 latest stable
-retrofit = "2.11.0" # Stable Retrofit
-# Glide version - KSP annotation processor version might differ slightly
+okhttp = "4.12.0"
+retrofit = "2.11.0"
+gson = "2.13.1"
+
+coilCompose = "2.7.0"
 glide = "4.16.0"
+lottieCompose = "6.6.6"
 
-# --- Dependency Injection ---
-hilt = "2.56.2" # Use consistent Hilt version (matches plugin)
+hilt = "2.56.2"
 hiltExtWork = "1.2.0"
 hiltExtNavigationCompose = "1.2.0"
 
-# --- Coroutines ---
-# Use latest stable aligned with Kotlin 1.9.22
 kotlinxCoroutines = "1.10.2"
 
-# --- JSON ---
-gson = "2.13.1" # Latest Gson
-
-# --- Utility ---
+jsoup = "1.20.1"
+zip4j = "2.11.5"
 timber = "5.0.1"
-# threetenabp = "1.4.6" # Check if still needed with Java 8+ desugaring
-zip4j = "2.11.5" # Keep if used
-jsoup = "1.20.1" # Check latest
+bouncyCastle = "1.78.1"
+remotepreferences = "0.8"
+desugarJdkLibs = "2.0.4"
 
-# --- Testing ---
+firebaseBom = "33.13.0"
+playServicesAuth = "21.3.0"
+googleGenerativeAi = "0.9.0"
+
+xposedBridgeDeltazefiro = "main-SNAPSHOT"
+libsu = "5.2.2"
+
 junit = "4.13.2"
-mockk = "1.14.2" # Check latest MockK
-
-# --- Google Play Services ---
-playServicesBase = "18.7.0" # Stable base version
-playServicesAuth = "21.3.0" # For Google Sign-In via Firebase
-# mlkitSubjectSegmentation = "16.0.0-beta01" # Keep if using this specific ML Kit feature
-
-# --- Root ---
-# Libsu: Check latest version on its GitHub page
-libsu = "6.0.0" # Example latest, please verify
-
-# --- Xposed ---
-xposedApi = "82" # API level
-
-# --- Other ---
-lottie = "6.4.1" # Check latest Lottie version
-remotepreferences = "0.8" # Crossbowffs version
+mockk = "1.14.2"
+androidxJunit = "1.2.1"
+espressoCore = "3.6.1"
+androidxTestCore = "1.6.1"
+androidxArchCoreTesting = "2.2.0"
+androidxTestRunner = "1.6.1"
+androidxTestRules = "1.6.1"
+androidxTestExtTruth = "1.6.0"
 
 [libraries]
-# --- AndroidX Core ---
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" } # Add if needed
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+google-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "googleGenerativeAi" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
-androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
-
-# --- AndroidX Lifecycle ---
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
-androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-# androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" } # Add if using LiveData
-
-# --- AndroidX Navigation ---
-androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" } # For Fragment based nav
-androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" } # For Fragment based nav
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" } # For Compose nav
-
-# --- AndroidX Room ---
-androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" } # For KSP/Kapt
-
-# --- AndroidX WorkManager ---
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntime" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
+androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "paletteKtx" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 
-# --- Compose ---
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" } # DebugImplementation
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.10.1" } # Use latest stable
-androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 
-# --- Hilt ---
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" } # For Kapt/KSP
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExtWork" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExtNavigationCompose" }
-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" } # For testing
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 
-# --- Coroutines ---
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" } # For testing
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
-# --- Networking ---
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
-
-# --- Image Loading ---
-# Glide
-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
-glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" } # KSP Processor
-# glide-transformations = { module = "jp.wasabeef:glide-transformations", version = "4.3.0" } # Add alias if used
-# Coil
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.7.0" } # Example Coil Compose
-
-# --- JSON ---
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
-# --- Logging ---
-timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
+glide-okhttp-integration = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
 
-# --- Xposed ---
-xposed-api = { group = "de.robv.android.xposed", name = "api", version.ref = "xposedApi" }
-# xposed-api-sources = { group = "de.robv.android.xposed", name = "api", classifier = "sources", version.ref = "xposedApi" } # Optional sources
-
-# --- Root ---
-libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
-libsu-nio = { group = "com.github.topjohnwu.libsu", name = "nio", version.ref = "libsu" }
-libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
-
-# --- Other UI/Utils ---
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-lottie = { group = "com.airbnb.android:lottie-compose", version = "6.4.1" } # Use lottie-compose, check latest version
-circleindicator = { group = "me.relex", name = "circleindicator", version.ref = "circleindicator" } # Check if still needed
-# blurview = { group = "com.github.Dimezis", name = "BlurView", version.ref = "blurview" } # Add if used
-# flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" } # Add if used
-remotepreferences = { group = "com.crossbowffs.remotepreferences", name = "remotepreferences", version.ref = "remotepreferences" } # Correct artifact
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
-# zip4j = { group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j" } # Add if used
-# threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version.ref = "threetenabp" } # Add if used
+zip4j = { group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+bouncycastle-prov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle" }
 
-# --- Google Play Services & ML Kit ---
-google-play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
-google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
-# google-mlkit-subject-segmentation = { group = "com.google.android.gms", name = "play-services-mlkit-subject-segmentation", version.ref = "mlkitSubjectSegmentation" } # Add version if needed
+xposed-bridge = { group = "com.github.deltazefiro", name = "XposedBridge", version.ref = "xposedBridgeDeltazefiro" }
 
-# --- Testing ---
+libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
+libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
+libsu-nio = { group = "com.github.topjohnwu.libsu", name = "nio", version.ref = "libsu" }
+
+remotepreferences = { group = "com.crossbowffs.remotepreferences", name = "remotepreferences", version.ref = "remotepreferences" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCoreTesting" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCoreTesting" }
-mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" } # Use mockk-android for Android tests
-mockk-agent = { group = "io.mockk", name = "mockk-agent-jvm", version.ref = "mockk" } # For unit tests if needed
-
-# --- Compiler Plugins ---
-# Defined in plugins block
-
-# --- Other Potential Aliases ---
-# desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.0.4" } # Or latest compatible
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
 [plugins]
-# Use stable plugin versions consistent with [versions] block
 agp-app = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" } # Version matches kotlin
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" } # Use hiltPlugin version
-gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" } # Use gmsPlugin version
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
+gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }

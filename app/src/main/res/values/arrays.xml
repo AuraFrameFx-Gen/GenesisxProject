@@ -1,25 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="supported_devices">
-        <item>OnePlus 8T</item>
-        <item>OnePlus 9</item>
-        <item>OnePlus 9 Pro</item>
-        <item>OnePlus 9T</item>
-        <item>OnePlus 10T</item>
-        <item>Pixel 3</item>
-        <item>Pixel 3a</item>
-        <item>Pixel 4</item>
-        <item>Pixel 4a</item>
-        <item>Pixel 4a 5G</item>
-        <item>Pixel 5</item>
-        <item>Pixel 5a</item>
-        <item>Pixel 6</item>
-        <item>Pixel 6 Pro</item>
-        <item>Pixel 6a</item>
-        <item>Pixel 7</item>
-        <item>Pixel 7 Pro</item>
-        <item>Pixel 7a</item>
-        <item>Pixel 8</item>
-        <item>Pixel 8 Pro</item>
-    </string-array>
-</resources>
+<resources></resources>
