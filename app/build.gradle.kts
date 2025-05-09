@@ -18,10 +18,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.hilt.android)
-    alias(libs.plugins.ksp)
-
-    id("kotlin-kapt")
-}
+    
+    }
 
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
@@ -200,6 +198,7 @@ android {
 }
 
 dependencies {
+    ksp("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.20")
     // Import the Firebase BoM for version management
     // Firebase BoM
     implementation(platform(libs.findLibrary("firebase-bom").get()))
