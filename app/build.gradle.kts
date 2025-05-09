@@ -221,7 +221,7 @@ dependencies {
     implementation(libs.findLibrary("firebase-storage-ktx").get())
     implementation(libs.findLibrary("firebase-messaging-ktx").get())
     implementation(libs.findLibrary("google-play-services-auth").get())
-    implementation(libs.findLibrary("google-generativeai").get())
+    implementation(libs.findLibrary("firebase-vertexai-ktx").get()) // Added Vertex AI
 
     // AndroidX
     // Ensures core Android classes like Service, Intent, IBinder are available
