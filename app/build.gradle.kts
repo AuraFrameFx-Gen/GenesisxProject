@@ -13,12 +13,13 @@ val keystoreProperties = Properties().apply {
 }
 
 plugins {
+    id("com.google.gms.google-services")
     alias(libs.plugins.agp.app)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.gms)
+
     id("kotlin-kapt")
 }
 
@@ -49,7 +50,7 @@ android {
         ndk {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
         }
-        signingConfig = signingConfigs.release
+
     }
 
     externalNativeBuild {
@@ -75,6 +76,16 @@ android {
             }
         }
         getByName("debug") {}
+        // Fallback: if release not created, use debug for release
+        if (findByName("release") == null) {
+            create("release") {
+                // Use debug config values for release if missing
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+                storeFile = rootProject.file(".android/debug.keystore")
+                storePassword = "android"
+            }
+        }
     }
 
     buildTypes {
@@ -91,7 +102,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.findByName("release")
+            // Always assign a signing config for release
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 
@@ -188,6 +200,12 @@ android {
 }
 
 dependencies {
+    // Import the Firebase BoM for version management
+    // Firebase BoM
+    implementation(platform(libs.findLibrary("firebase-bom").get()))
+    // Firebase Analytics (ktx)
+    implementation(libs.findLibrary("firebase-analytics-ktx").get())
+    // Add other Firebase dependencies as needed
     coreLibraryDesugaring(libs.findLibrary("desugar-jdk-libs").get())
 
     // Firebase
@@ -256,14 +274,14 @@ dependencies {
     // Images
     implementation(libs.findLibrary("coil-compose").get())
     ksp(libs.findLibrary("glide-ksp").get())
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
+    implementation(libs.findLibrary("glide-okhttp-integration").get())
     implementation(libs.findLibrary("lottie-compose").get())
 
     // Utilities
     implementation(libs.findLibrary("jsoup").get())
     implementation(libs.findLibrary("zip4j").get())
     implementation(libs.findLibrary("timber").get())
-    implementation("org.bouncycastle:bcprov-jdk18on:1.80")
+    implementation(libs.findLibrary("bouncycastle-prov").get())
 
     // Xposed
     compileOnly(libs.findLibrary("xposed-bridge").get())

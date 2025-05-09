@@ -1,10 +1,12 @@
 plugins {
+    // Google services Gradle plugin for Firebase
+    id("com.google.gms.google-services") version "4.4.2" apply false
     alias(libs.plugins.agp.app) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt.android) apply false
-    alias(libs.plugins.gms) apply false
+
 }
 
 allprojects {
