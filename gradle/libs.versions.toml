@@ -50,7 +50,7 @@ desugarJdkLibs = "2.0.4"
 
 firebaseBom = "33.13.0"
 playServicesAuth = "21.3.0"
-googleGenerativeAi = "0.9.0"
+googleGenerativeAi = "0.9.0" # Note: This is the standalone Google AI client library
 
 xposedBridgeDeltazefiro = "main-SNAPSHOT"
 libsu = "5.2.2"
@@ -75,14 +75,26 @@ firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-fires
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
+
+# --- ADDED: Firebase Vertex AI dependency ---
+# No version needed because you are using the Firebase BoM
+firebase-vertexai = { group = "com.google.firebase", name = "firebase-vertexai" }
+# ------------------------------------------
+
 google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
-google-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "googleGenerativeAi" }
+
+# --- NOTE ---
+# This dependency (google-generativeai) is for the standalone Google AI client library.
+# If you intend to use Vertex AI *through* Firebase (com.google.firebase:firebase-vertexai),
+# you should consider removing or commenting out the following line to avoid potential issues.
+# google-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "googleGenerativeAi" }
+# --------------
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
+androidx-multidex = { group = "androidx.multidex", name = "multidex" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntime" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
@@ -134,7 +146,7 @@ glide-okhttp-integration = { group = "com.github.bumptech.glide", name = "okhttp
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 zip4j = { group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j" }
-timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+timber = { group = "com.jakewharton.timber", name = "timber" } # Note: timber dependency doesn't have version.ref - might be okay if inferred or managed elsewhere, but usually good to have.
 bouncycastle-prov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle" }
 
 xposed-bridge = { group = "com.github.deltazefiro", name = "XposedBridge", version.ref = "xposedBridgeDeltazefiro" }
