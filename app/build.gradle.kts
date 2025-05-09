@@ -58,10 +58,6 @@ android {
         }
     }
 
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
-        arg("room.incremental", "true")
-    }
 
     // Signing configuration using keystore.properties
     signingConfigs {
@@ -198,7 +194,6 @@ android {
 }
 
 dependencies {
-    ksp("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.20")
     // Import the Firebase BoM for version management
     // Firebase BoM
     implementation(platform(libs.findLibrary("firebase-bom").get()))
@@ -251,11 +246,9 @@ dependencies {
     // Room
     implementation(libs.findLibrary("androidx-room-runtime").get())
     implementation(libs.findLibrary("androidx-room-ktx").get())
-    ksp(libs.findLibrary("androidx-room-compiler").get())
 
     // Hilt
     implementation(libs.findLibrary("hilt-android").get())
-    kapt(libs.findLibrary("hilt-compiler").get())
     implementation(libs.findLibrary("hilt-work").get())
     implementation(libs.findLibrary("hilt-navigation-compose").get())
 
@@ -272,7 +265,6 @@ dependencies {
 
     // Images
     implementation(libs.findLibrary("coil-compose").get())
-    ksp(libs.findLibrary("glide-ksp").get())
     implementation(libs.findLibrary("glide-okhttp-integration").get())
     implementation(libs.findLibrary("lottie-compose").get())
 
@@ -307,6 +299,5 @@ dependencies {
     androidTestImplementation(libs.findLibrary("androidx-compose-ui-test-junit4").get())
     debugImplementation(libs.findLibrary("androidx-compose-ui-test-manifest").get())
     androidTestImplementation(libs.findLibrary("hilt-android-testing").get())
-    kaptAndroidTest(libs.findLibrary("hilt-compiler").get())
 }
 
