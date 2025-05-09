@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.2"
+googleServices = "4.4.2"
 kotlin = "2.0.0"
 ksp = "2.0.0-1.0.20"
 hiltPlugin = "2.51.1"
@@ -89,6 +90,7 @@ androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", versi
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 
+google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
