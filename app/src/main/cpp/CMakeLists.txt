@@ -16,7 +16,7 @@ add_library(
         SHARED
 
         # Provides a relative path to your source file(s).
-        src/main/cpp/AuraFrameFX.cpp
+        AuraFrameFX.cpp
 )
 
 # Searches for a specified prebuilt library and stores the path as a variable.
