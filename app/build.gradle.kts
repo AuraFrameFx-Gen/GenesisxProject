@@ -13,36 +13,25 @@ val keystoreProperties = Properties().apply {
 }
 
 plugins {
-    id("com.google.gms.google-services")
     alias(libs.plugins.agp.app)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.hilt.android)
-    id("org.jetbrains.kotlin.kapt")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.gms)
+    id("kotlin-kapt")
 }
-
-
 
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 android {
     namespace = "dev.aurakai.auraframefx"
-    buildFeatures {
-        compose = true
-    }
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
-        externalNativeBuild {
-            cmake {
-                cppFlags.addAll(listOf("-std=c++17", "-fexceptions", "-frtti"))
-                arguments.addAll(listOf("-DANDROID_STL=c++_shared", "-DANDROID_ARM_NEON=TRUE"))
-            }
-        }
         applicationId = "dev.aurakai.auraframefx"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
 
@@ -51,41 +40,43 @@ android {
             useSupportLibrary = true
         }
         multiDexEnabled = true
+
         ndk {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
         }
 
-    }
+        externalNativeBuild {
+            cmake {
+                path = file("src/main/cpp/CMakeLists.txt")
+                version = "3.22.1"
+                cppFlags.addAll(listOf(
+                    "-std=c++17",
+                    "-fexceptions",
+                    "-frtti"
+                ))
+                arguments.addAll(listOf(
+                    "-DANDROID_STL=c++_shared",
+                    "-DANDROID_ARM_NEON=TRUE"
+                ))
+            }
+        }
 
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.incremental", "true")
         }
     }
 
-
-    // Signing configuration using keystore.properties
     signingConfigs {
         if (keystoreProperties.getProperty("keyAlias") != null) {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile", "keystore/auraframefx-release.jks"))
+                setStoreFile(rootProject.file(keystoreProperties.getProperty("storeFile", "keystore/default.jks")))
                 storePassword = keystoreProperties.getProperty("storePassword")
             }
         }
         getByName("debug") {}
-        // Fallback: if release not created, use debug for release
-        if (findByName("release") == null) {
-            create("release") {
-                // Use debug config values for release if missing
-                keyAlias = "androiddebugkey"
-                keyPassword = "android"
-                storeFile = rootProject.file(".android/debug.keystore")
-                storePassword = "android"
-            }
-        }
     }
 
     buildTypes {
@@ -102,8 +93,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // Always assign a signing config for release
-            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 
@@ -111,39 +101,32 @@ android {
     productFlavors {
         create("standard") {
             dimension = "distribution"
-            // Optionally set:
-            // minSdk = 31
-            // versionName = "1.0.0"
         }
         create("foss") {
             dimension = "distribution"
             applicationIdSuffix = ".foss"
-            versionCode = 1
-            proguardFiles("proguard-rules.pro")
-            versionName = "beta"
         }
     }
 
     sourceSets {
         getByName("main") {
-            java.srcDirs("src/main/java", "src/main/xposed")
-            res.srcDirs("src/main/res")
-            assets.srcDirs("src/main/assets")
-            jniLibs.srcDirs("src/main/jniLibs")
+             java.srcDirs("src/main/java", "src/main/xposed")
+             res.srcDirs("src/main/res")
+             assets.srcDirs("src/main/assets")
+             jniLibs.srcDirs("src/main/jniLibs")
         }
         findByName("standard")?.java?.srcDirs("src/standard/java")
         findByName("foss")?.java?.srcDirs("src/foss/java")
-
     }
 
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            isUniversalApk = true
-        }
-    }
+     splits {
+         abi {
+             isEnable = true
+             reset()
+             include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+             isUniversalApk = true
+         }
+     }
 
     buildFeatures {
         buildConfig = true
@@ -153,28 +136,26 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.findVersion("composeCompiler").get().toString()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
     packaging {
         resources {
-            excludes.addAll(
-                listOf(
-                    "/META-INF/{AL2.0,LGPL2.1}",
-                    "META-INF/DEPENDENCIES",
-                    "META-INF/LICENSE*",
-                    "META-INF/NOTICE*",
-                    "META-INF/ASL2.0",
-                    "META-INF/*.kotlin_module",
-                    "META-INF/versions/9/previous-compilation-data.bin",
-                    "**/attach_hotspot_api.dll",
-                    "DebugProbesKt.bin"
-                )
-            )
+            excludes.addAll(listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE*",
+                "META-INF/NOTICE*",
+                "META-INF/ASL2.0",
+                "META-INF/*.kotlin_module",
+                "META-INF/versions/9/previous-compilation-data.bin",
+                "**/attach_hotspot_api.dll",
+                "DebugProbesKt.bin"
+            ))
         }
         jniLibs {
-            pickFirsts.add("**/libc++_shared.so")
-            useLegacyPackaging = false
+             pickFirsts.add("**/libc++_shared.so")
+             useLegacyPackaging = false
         }
     }
 
@@ -191,124 +172,104 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs += listOf(
-            "-Xjvm-default=all",
-            "-opt-in=kotlin.RequiresOptIn"
-        )
-    }
-    kapt {
-        correctErrorTypes = true
-    }
+         jvmTarget = "17"
+         freeCompilerArgs += listOf(
+             "-Xjvm-default=all",
+             "-opt-in=kotlin.RequiresOptIn"
+         )
+     }
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
-    kapt("com.google.dagger:hilt-compiler:2.50")
-    // Import the Firebase BoM for version management
-    // Firebase BoM
-    implementation(platform(libs.findLibrary("firebase-bom").get()))
-    // Firebase Analytics (ktx)
-    implementation(libs.findLibrary("firebase-analytics-ktx").get())
-    // Add other Firebase dependencies as needed
-    coreLibraryDesugaring(libs.findLibrary("desugar-jdk-libs").get())
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.vertexai.ktx)
+    implementation(libs.google.play.services.auth)
+    implementation(libs.google.generativeai)
 
-    // Firebase
-    implementation(platform(libs.findLibrary("firebase-bom").get()))
-    implementation(libs.findLibrary("firebase-analytics-ktx").get())
-    implementation(libs.findLibrary("firebase-firestore-ktx").get())
-    implementation(libs.findLibrary("firebase-auth-ktx").get())
-    implementation(libs.findLibrary("firebase-storage-ktx").get())
-    implementation(libs.findLibrary("firebase-messaging-ktx").get())
-    implementation(libs.findLibrary("google-play-services-auth").get())
-    implementation(libs.findLibrary("firebase-vertexai-ktx").get()) // Added Vertex AI
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.multidex)
+    implementation(libs.androidx.startup.runtime)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.palette.ktx)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager2)
 
-    // AndroidX
-    // Ensures core Android classes like Service, Intent, IBinder are available
-    implementation(libs.findLibrary("androidx-core-ktx").get())
-    implementation(libs.findLibrary("androidx-activity-ktx").get())
-    // Ensures backward compatibility for Android components
-    implementation(libs.findLibrary("androidx-appcompat").get())
-    implementation(libs.findLibrary("androidx-constraintlayout").get())
+    implementation(libs.material)
 
-    implementation(libs.findLibrary("androidx-multidex").get())
-    implementation(libs.findLibrary("androidx-startup-runtime").get())
-    implementation(libs.findLibrary("androidx-work-runtime-ktx").get())
-    implementation(libs.findLibrary("androidx-preference-ktx").get())
-    implementation(libs.findLibrary("androidx-palette-ktx").get())
-    implementation(libs.findLibrary("androidx-recyclerview").get())
-    implementation(libs.findLibrary("androidx-viewpager2").get())
-    implementation(libs.findLibrary("material").get())
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
 
-    // Compose
-    implementation(platform(libs.findLibrary("androidx-compose-bom").get()))
-    implementation(libs.findLibrary("androidx-compose-ui").get())
-    implementation(libs.findLibrary("androidx-compose-material3").get())
-    implementation(libs.findLibrary("androidx-compose-ui-tooling-preview").get())
-    debugImplementation(libs.findLibrary("androidx-compose-ui-tooling").get())
-    implementation(libs.findLibrary("androidx-activity-compose").get())
-    implementation(libs.findLibrary("androidx-lifecycle-runtime-ktx").get())
-    implementation(libs.findLibrary("androidx-lifecycle-viewmodel-ktx").get())
-    implementation(libs.findLibrary("androidx-lifecycle-livedata-ktx").get())
-    implementation(libs.findLibrary("androidx-lifecycle-runtime-compose").get())
-    implementation(libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
-    implementation(libs.findLibrary("androidx-navigation-compose").get())
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    // Room
-    implementation(libs.findLibrary("androidx-room-runtime").get())
-    implementation(libs.findLibrary("androidx-room-ktx").get())
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.hilt.work)
+    implementation(libs.hilt.navigation.compose)
 
-    // Hilt
-    implementation(libs.findLibrary("hilt-android").get())
-    implementation(libs.findLibrary("hilt-work").get())
-    implementation(libs.findLibrary("hilt-navigation-compose").get())
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
-    // Kotlinx Coroutines
-    implementation(libs.findLibrary("kotlinx-coroutines-core").get())
-    implementation(libs.findLibrary("kotlinx-coroutines-android").get())
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.gson)
 
-    // Networking
-    implementation(libs.findLibrary("okhttp").get())
-    implementation(libs.findLibrary("okhttp-logging-interceptor").get())
-    implementation(libs.findLibrary("retrofit").get())
-    implementation(libs.findLibrary("retrofit-converter-gson").get())
-    implementation(libs.findLibrary("gson").get())
+    implementation(libs.coil.compose)
+    ksp(libs.glide.ksp)
+    implementation(libs.glide.okhttp.integration)
 
-    // Images
-    implementation(libs.findLibrary("coil-compose").get())
-    implementation(libs.findLibrary("glide-okhttp-integration").get())
-    implementation(libs.findLibrary("lottie-compose").get())
+    implementation(libs.lottie.compose)
+    implementation(libs.jsoup)
+    implementation(libs.zip4j)
+    implementation(libs.timber)
+    implementation(libs.bouncycastle.prov)
 
-    // Utilities
-    implementation(libs.findLibrary("jsoup").get())
-    implementation(libs.findLibrary("zip4j").get())
-    implementation(libs.findLibrary("timber").get())
-    implementation(libs.findLibrary("bouncycastle-prov").get())
+    compileOnly(libs.xposed.bridge)
+    compileOnly("com.github.deltazefiro:XposedBridge:${libs.versions.xposedBridgeDeltazefiro.get()}:sources")
 
-    // Xposed
-    compileOnly(libs.findLibrary("xposed-bridge").get())
-    compileOnly("com.github.deltazefiro:XposedBridge:${libs.findVersion("xposedBridgeDeltazefiro").get()}:sources")
 
-    // libsu
-    implementation(libs.findLibrary("libsu-core").get())
-    implementation(libs.findLibrary("libsu-service").get())
-    implementation(libs.findLibrary("libsu-nio").get())
+    implementation(libs.libsu.core)
+    implementation(libs.libsu.service)
+    implementation(libs.libsu.nio)
 
-    // Remote Preferences
-    implementation(libs.findLibrary("remotepreferences").get())
+    implementation(libs.remotepreferences)
 
-    // Testing
-    testImplementation(libs.findLibrary("junit").get())
-    testImplementation(libs.findLibrary("mockk-android").get())
-    testImplementation(libs.findLibrary("kotlinx-coroutines-test").get())
-    testImplementation(libs.findLibrary("androidx-test-core").get())
-    testImplementation(libs.findLibrary("androidx-arch-core-testing").get())
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.arch.core.testing)
 
-    androidTestImplementation(libs.findLibrary("androidx-test-ext-junit").get())
-    androidTestImplementation(libs.findLibrary("espresso-core").get())
-    androidTestImplementation(platform(libs.findLibrary("androidx-compose-bom").get()))
-    androidTestImplementation(libs.findLibrary("androidx-compose-ui-test-junit4").get())
-    debugImplementation(libs.findLibrary("androidx-compose-ui-test-manifest").get())
-    androidTestImplementation(libs.findLibrary("hilt-android-testing").get())
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.compiler)
 }
-
