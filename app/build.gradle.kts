@@ -18,13 +18,21 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.hilt.android)
-    
-    }
+    id("org.jetbrains.kotlin.kapt")
+}
+
+
 
 val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 android {
     namespace = "dev.aurakai.auraframefx"
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
+    }
     compileSdk = 35
 
     defaultConfig {
@@ -191,9 +199,14 @@ android {
             "-opt-in=kotlin.RequiresOptIn"
         )
     }
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
+    implementation("androidx.compose.compiler:compiler:1.5.11")
+    kapt("com.google.dagger:hilt-compiler:2.50")
     // Import the Firebase BoM for version management
     // Firebase BoM
     implementation(platform(libs.findLibrary("firebase-bom").get()))
