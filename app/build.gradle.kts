@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.hilt.android)
     id("org.jetbrains.kotlin.kapt")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 
@@ -29,9 +30,6 @@ android {
     namespace = "dev.aurakai.auraframefx"
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
     }
     compileSdk = 35
 
@@ -205,7 +203,7 @@ android {
 }
 
 dependencies {
-    implementation("androidx.compose.compiler:compiler:1.5.11")
+
     kapt("com.google.dagger:hilt-compiler:2.50")
     // Import the Firebase BoM for version management
     // Firebase BoM
