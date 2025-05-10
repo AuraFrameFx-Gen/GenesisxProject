@@ -31,19 +31,19 @@ class AppInitializer @Inject constructor(
         initializeKaiNotchBar()
 
         Timber.d("Application components initialized successfully")
-    }
-
-    private fun initializeNativeLibraries() {
+    }    private fun initializeNativeLibraries() {
         try {
-            Timber.d("Initializing native libraries...")
-            System.loadLibrary("AuraFrameFX")
-            Timber.d("Native libraries initialized successfully")
+            Timber.d("Initializing native libraries... (skipped for debug build)")
+            // Temporarily disabled for debug build
+            // System.loadLibrary("AuraFrameFX")
+            Timber.d("Native libraries initialization skipped")
         } catch (e: UnsatisfiedLinkError) {
             Timber.e(e, "Failed to load native library")
             // We might want to handle this differently in production
-            if (BuildConfig.DEBUG) {
-                throw e
-            }
+            // Disabled for now
+            // if (BuildConfig.DEBUG) {
+            //     throw e
+            // }
         }
     }
 
