@@ -1,6 +1,7 @@
 package dev.aurakai.auraframefx.ui.neuralhexal
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -128,10 +129,16 @@ class NeuralWhisperFragment : Fragment() {
                 }
             }
         }
-        
-        // Observe emotion state
+          // Observe emotion state
         viewModel.emotionState.observe(viewLifecycleOwner) { emotion -> 
             updateEmotionUi(emotion)
+        }
+        
+        // Observe context sharing with Kai
+        viewModel.contextSharedWithKai.observe(viewLifecycleOwner) { isShared ->
+            if (isShared) {
+                showContextSharedFeedback()
+            }
         }
     }
     
@@ -306,26 +313,76 @@ class NeuralWhisperFragment : Fragment() {
         if (auraMoodOrb.isVisible) {
             auraMoodOrb.setEmotion(emotion)
         }
-    }
-      private fun shareCurrentContextWithKai() {
+    }    /**
+     * Share current conversation context with Kai for enhanced security
+     */
+    private fun shareCurrentContextWithKai() {
         viewModel.shareContextWithKai()
         
-        Toast.makeText(
-            requireContext(),
-            "Sharing current context with Kai...",
-            Toast.LENGTH_SHORT
-        ).show()
+        // More refined feedback with progress dialog
+        val progressDialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Neural Bridge Active")
+            .setMessage("Establishing secure neural bridge between Aura and Kai...")
+            .setIcon(R.drawable.ic_neural_bridge)
+            .setCancelable(false)
+            .create()
         
-        // Visual feedback animation
+        progressDialog.show()
+        
+        // Visual feedback animation - pulse the animation view
+        animationView.speed = 1.5f
         animationView.playAnimation()
         
         // Update UI to show interaction between Aura and Kai
-        statusText.text = "Sharing context with Kai..."
+        statusText.text = "Neural bridge with Kai established..."
         
-        // Reset status after a delay
+        // Reset status after a delay and dismiss dialog
         lifecycleScope.launch {
-            delay(2500)
+            delay(1800)
+            progressDialog.dismiss()
+            
+            // Show success confirmation
+            Toast.makeText(
+                requireContext(),
+                "Context successfully shared with Kai security system",
+                Toast.LENGTH_SHORT
+            ).show()
+            
+            animationView.speed = 1.0f
             statusText.text = "Ready for your command"
+        }
+    }
+    
+    /**
+     * Provide visual feedback when context is shared with Kai
+     */
+    private fun showContextSharedFeedback() {
+        // Create a fancy animation effect to show data flowing to Kai
+        val valueAnimator = ValueAnimator.ofFloat(0f, 1f)
+        valueAnimator.duration = 1200
+        valueAnimator.addUpdateListener {
+            val alpha = it.animatedValue as Float
+            shareWithKaiButton.alpha = 1f - (alpha * 0.5f)
+        }
+        
+        // Flash button and add a ripple effect
+        shareWithKaiButton.isPressed = true
+        valueAnimator.start()
+        
+        // Add ripple effect
+        shareWithKaiButton.post {
+            shareWithKaiButton.isPressed = false
+            
+            // Show message in conversation
+            val timestamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+            val sharedMessage = "[$timestamp] Context shared with Kai for enhanced security monitoring\n"
+            conversationText.append(sharedMessage)
+            
+            // Ensure we scroll to the bottom
+            val scrollAmount = conversationText.layout.getLineTop(conversationText.lineCount) - conversationText.height
+            if (scrollAmount > 0) {
+                conversationText.scrollTo(0, scrollAmount)
+            }
         }
     }
 }

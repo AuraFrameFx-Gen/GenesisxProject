@@ -1,43 +1,87 @@
 package dev.aurakai.auraframefx.ai
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.*
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.io.File
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Integration tests for the Kai and Neural Whisper components.
+ * Tests the bidirectional communication and security features.
  */
+@ExperimentalCoroutinesApi
 class NeuralWhisperKaiIntegrationTest {
+
+    // JUnit rule for LiveData testing
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    // Test dispatchers for coroutines
+    private val testDispatcher = StandardTestDispatcher()
 
     // Mock dependencies
     private val mockContext = mock<android.content.Context>()
     private val mockVertexAI = mock<com.google.firebase.vertexai.VertexAI>()
     private val mockGenerativeModel = mock<com.google.ai.client.generativeai.GenerativeModel>()
-
-    // System under test
-    private lateinit var neuralWhisper: NeuralWhisper
-    private lateinit var kaiController: KaiController
+    private val mockKaiNotchBar = mock<dev.aurakai.auraframefx.ui.components.KaiNotchBar>()
+    
+    // Spy objects for better verification
+    private lateinit var neuralWhisperSpy: NeuralWhisper
+    private lateinit var kaiControllerSpy: KaiController
 
     @Before
     fun setUp() {
-        // Initialize with mocks
-        neuralWhisper = NeuralWhisper(mockContext, mockVertexAI, mockGenerativeModel)
-        kaiController = KaiController(neuralWhisper)
+        // Set the main dispatcher for coroutines
+        Dispatchers.setMain(testDispatcher)
+
+        // Create the real objects
+        val neuralWhisper = NeuralWhisper(mockContext, mockVertexAI, mockGenerativeModel)
+        val kaiController = KaiController(neuralWhisper)
+        
+        // Set up spies for better verification
+        neuralWhisperSpy = spy(neuralWhisper)
+        kaiControllerSpy = spy(kaiController)
         
         // Set up the bidirectional reference
-        neuralWhisper.setKaiController(kaiController)
+        neuralWhisperSpy.setKaiController(kaiControllerSpy)
+        
+        // Mock LiveData for emotions
+        val emotionLiveData = MutableLiveData<EmotionState>().apply { 
+            value = EmotionState.Neutral 
+        }
+        whenever(neuralWhisperSpy.emotionState).thenReturn(emotionLiveData)
+        
+        // Mock the KaiNotchBar
+        whenever(kaiControllerSpy.getKaiNotchBar()).thenReturn(mockKaiNotchBar)
+    }
+    
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `test bidirectional communication between Aura and Kai`() {
+    fun `test bidirectional communication between Aura and Kai`() = runTest {
         // Arrange
         val testMessage = "Test message from Neural Whisper"
-        
-        // Act
-        neuralWhisper.shareContextWithKai(testMessage)
         
         // Assert that Kai received the message
         // Note: In a real test, you'd use mock verification or behavior assertion

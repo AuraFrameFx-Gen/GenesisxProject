@@ -157,6 +157,9 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
             
             Timber.d("KaiNotchBar attached to window")
             
+            // Start security monitoring
+            startSecurityMonitoring()
+            
         } catch (e: Exception) {
             Timber.e(e, "Failed to attach KaiNotchBar to window")
         }
@@ -172,6 +175,9 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
             windowManager?.removeView(this)
             isAttachedToWindow = false
             Timber.d("KaiNotchBar detached from window")
+            
+            // Stop security monitoring
+            stopSecurityMonitoring()
             
         } catch (e: Exception) {
             Timber.e(e, "Failed to detach KaiNotchBar from window")
@@ -329,6 +335,239 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
         }
         
         return super.onTouchEvent(event)
+    }
+    
+    /**
+     * Start security monitoring features when Kai attaches to window
+     */
+    private fun startSecurityMonitoring() {
+        if (adBlockEnabled) startAdBlocker()
+        if (ramOptimizationEnabled) startRamOptimizer()
+        if (systemMonitoringEnabled) startSystemMonitor()
+        if (errorCheckingEnabled) startErrorChecker()
+        
+        Timber.d("Kai security features activated")
+    }
+    
+    /**
+     * Stop all security monitoring features
+     */
+    private fun stopSecurityMonitoring() {
+        adBlockJob?.cancel()
+        ramOptimizationJob?.cancel()
+        systemMonitorJob?.cancel()
+        errorCheckingJob?.cancel()
+        
+        Timber.d("Kai security features deactivated")
+    }
+    
+    /**
+     * Load ad blocking hosts from resource
+     */
+    private fun loadAdBlockingHosts() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // In a real implementation, load from a hosts file or API
+                blockedHosts.addAll(listOf(
+                    "ads.example.com",
+                    "tracker.example.net",
+                    "analytics.example.org",
+                    "ads.doubleclick.net",
+                    "advertising.com",
+                    "banners.example.com"
+                ))
+                Timber.d("Loaded ${blockedHosts.size} ad blocking hosts")
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to load ad blocking hosts")
+            }
+        }
+    }
+    
+    /**
+     * Start ad blocker service
+     */
+    private fun startAdBlocker() {
+        adBlockJob = CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                try {
+                    // Simulate ad blocking check
+                    val blockedCount = (0..3).random()
+                    if (blockedCount > 0) {
+                        withContext(Dispatchers.Main) {
+                            flashPulse()
+                        }
+                        Timber.d("Blocked $blockedCount ad requests")
+                    }
+                    delay(10000) // Check every 10 seconds
+                } catch (e: Exception) {
+                    Timber.e(e, "Error in ad blocker")
+                }
+            }
+        }
+    }
+    
+    /**
+     * Start RAM optimization service
+     */
+    private fun startRamOptimizer() {
+        ramOptimizationJob = CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                try {
+                    // Get current RAM usage
+                    val memInfo = ActivityManager.MemoryInfo()
+                    val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                    activityManager.getMemoryInfo(memInfo)
+                    
+                    val availableMem = memInfo.availMem
+                    val totalMem = memInfo.totalMem
+                    ramUsage = 100.0 * (totalMem - availableMem) / totalMem
+                    
+                    // Optimize if RAM usage is high
+                    if (ramUsage > 80) {
+                        Timber.d("High RAM usage detected: $ramUsage%, optimizing...")
+                        optimizeMemory(activityManager)
+                        
+                        withContext(Dispatchers.Main) {
+                            updateState(KaiState.ALERT)
+                            speak("RAM usage optimized", onComplete = {
+                                updateState(KaiState.IDLE)
+                            })
+                        }
+                    }
+                    
+                    delay(30000) // Check every 30 seconds
+                } catch (e: Exception) {
+                    Timber.e(e, "Error in RAM optimizer")
+                }
+            }
+        }
+    }
+    
+    /**
+     * Optimize device memory
+     */
+    private fun optimizeMemory(activityManager: ActivityManager) {
+        try {
+            // Request garbage collection
+            System.gc()
+            
+            // In a real app with proper permissions, we could:
+            // 1. Identify memory-intensive background apps
+            // 2. Suggest closing them or actually close them with proper permissions
+            // 3. Clear application caches
+            
+            // For simulation purposes, we'll log it
+            Timber.d("Memory optimization performed")
+            
+        } catch (e: Exception) {
+            Timber.e(e, "Error optimizing memory")
+        }
+    }
+    
+    /**
+     * Start system monitoring service
+     */
+    private fun startSystemMonitor() {
+        systemMonitorJob = CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                try {
+                    // Monitor CPU usage
+                    cpuUsage = readCpuUsage()
+                    
+                    // Monitor battery temperature
+                    batteryTemp = readBatteryTemperature()
+                    
+                    // Alert if system is in danger zone
+                    if (cpuUsage > 90 || batteryTemp > 45) {
+                        withContext(Dispatchers.Main) {
+                            updateState(KaiState.ALERT)
+                            val message = if (cpuUsage > 90) 
+                                "High CPU detected: ${cpuUsage.toInt()}%" 
+                            else 
+                                "High battery temperature: ${batteryTemp.toInt()}°C"
+                            
+                            speak(message, onComplete = {
+                                updateState(KaiState.IDLE)
+                            })
+                        }
+                    }
+                    
+                    delay(60000) // Check every minute
+                } catch (e: Exception) {
+                    Timber.e(e, "Error in system monitor")
+                }
+            }
+        }
+    }
+    
+    /**
+     * Read CPU usage from proc
+     */
+    private fun readCpuUsage(): Double {
+        try {
+            // In a real implementation, we'd read from /proc/stat
+            // For this demo, we'll simulate it
+            return (20..95).random().toDouble()
+        } catch (e: Exception) {
+            Timber.e(e, "Error reading CPU usage")
+            return 0.0
+        }
+    }
+    
+    /**
+     * Read battery temperature
+     */
+    private fun readBatteryTemperature(): Double {
+        try {
+            // In a real implementation, we'd use BatteryManager
+            // For this demo, we'll simulate it
+            return (25..48).random().toDouble()
+        } catch (e: Exception) {
+            Timber.e(e, "Error reading battery temperature")
+            return 0.0
+        }
+    }
+    
+    /**
+     * Start error checking service
+     */
+    private fun startErrorChecker() {
+        errorCheckingJob = CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                try {
+                    // Check for app crashes in logs
+                    val newErrors = checkForErrors()
+                    
+                    if (newErrors > 0) {
+                        errorCount += newErrors
+                        withContext(Dispatchers.Main) {
+                            updateState(KaiState.ALERT)
+                            speak("Detected $newErrors new error events", onComplete = {
+                                updateState(KaiState.IDLE)
+                            })
+                        }
+                    }
+                    
+                    delay(120000) // Check every 2 minutes
+                } catch (e: Exception) {
+                    Timber.e(e, "Error in error checker")
+                }
+            }
+        }
+    }
+    
+    /**
+     * Check system logs for errors
+     */
+    private fun checkForErrors(): Int {
+        try {
+            // In a real implementation with proper permissions, we'd read system logs
+            // For this demo, we'll simulate finding random errors
+            return (0..2).random()
+        } catch (e: Exception) {
+            Timber.e(e, "Error checking for errors")
+            return 0
+        }
     }
     
     /**

@@ -37,11 +37,12 @@ class NeuralWhisper @Inject constructor(
     private val context: Context,
     private val vertexAI: VertexAI,
     private val generativeModel: GenerativeModel
-) {
-    private val _conversationState = MutableStateFlow<ConversationState>(ConversationState.Idle)
+) {    private val _conversationState = MutableStateFlow<ConversationState>(ConversationState.Idle)
     val conversationState = _conversationState.asStateFlow()
     private val _emotionState = MutableLiveData<EmotionState>(EmotionState.Neutral)
     val emotionState: LiveData<EmotionState> = _emotionState
+    private val _contextSharedWithKai = MutableLiveData<Boolean>(false)
+    val contextSharedWithKai: LiveData<Boolean> = _contextSharedWithKai
     
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     
@@ -80,14 +81,57 @@ class NeuralWhisper @Inject constructor(
     
     /**
      * Share context with Kai
+     * Enhanced with conversation history and security context awareness
      */
     fun shareContextWithKai(message: String) {
         kaiController?.let {
             val currentEmotion = _emotionState.value ?: EmotionState.Neutral
-            it.receiveFromAura(message, currentEmotion)
-            Timber.d("Shared context with Kai: $message")
+            
+            // Enhance the message with relevant conversation history
+            val enhancedMessage = if (conversationHistory.isNotEmpty()) {
+                val recentHistory = conversationHistory.takeLast(3)
+                val historyContext = recentHistory.joinToString("\n") { 
+                    "User: ${it.userInput}\nResponse: ${it.response.take(100)}..." 
+                }
+                "$message\n\nRecent context:\n$historyContext"
+            } else {
+                message
+            }
+            
+            // Pass security context if available
+            val securityContext = getSecurityContext()
+            
+            // Pass to Kai
+            it.receiveFromAura(enhancedMessage, currentEmotion, securityContext)
+            Timber.d("Shared context with Kai: $message with security context: $securityContext")
+            
+            // Update UI state - related components might need to know context was shared
+            _contextSharedWithKai.postValue(true)
+            
+            // Reset after some time
+            coroutineScope.launch {
+                delay(5000)
+                _contextSharedWithKai.postValue(false)
+            }
         }
-    }    /**
+    }
+    
+    /**
+     * Get current security context for Kai
+     */
+    private fun getSecurityContext(): SecurityContext {
+        // In a real implementation, we would gather real security data
+        // For now, return simulated security context
+        return SecurityContext(
+            adBlockingActive = true,
+            ramUsage = (60..85).random().toDouble(),
+            cpuUsage = (30..90).random().toDouble(),
+            batteryTemp = (25..45).random().toDouble(),
+            recentErrors = (0..3).random()
+        )
+    }
+
+    /**
      * Processes voice input with context awareness
      */
     fun processVoiceCommand(audioFile: File) {

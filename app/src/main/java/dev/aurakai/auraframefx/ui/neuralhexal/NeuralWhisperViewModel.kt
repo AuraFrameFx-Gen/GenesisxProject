@@ -29,17 +29,19 @@ class NeuralWhisperViewModel @Inject constructor(
     // Expose conversation state from Neural Whisper
     private val _conversationState = MutableStateFlow<ConversationState>(ConversationState.Idle)
     val conversationState: StateFlow<ConversationState> = _conversationState.asStateFlow()
-    
-    // Expose emotion state from Neural Whisper
+      // Expose emotion state from Neural Whisper
     private val _emotionState = MutableLiveData<EmotionState>(EmotionState.Neutral)
     val emotionState: LiveData<EmotionState> = _emotionState
+    
+    // Track when context is shared with Kai
+    private val _contextSharedWithKai = MutableLiveData<Boolean>(false)
+    val contextSharedWithKai: LiveData<Boolean> = _contextSharedWithKai
     
     // Track the last user input for UI display
     private val _lastUserInput = MutableLiveData<String>("")
     val lastUserInput: String
         get() = _lastUserInput.value ?: ""
-    
-    // Initialize by collecting from Neural Whisper
+      // Initialize by collecting from Neural Whisper
     init {
         viewModelScope.launch {
             neuralWhisper.conversationState.collect { state ->
@@ -50,6 +52,11 @@ class NeuralWhisperViewModel @Inject constructor(
                     _lastUserInput.postValue(extractUserInput(state.response))
                 }
             }
+        }
+        
+        // Observe context sharing with Kai
+        neuralWhisper.contextSharedWithKai.observeForever { isShared ->
+            _contextSharedWithKai.value = isShared
         }
         
         // Observe emotion state changes

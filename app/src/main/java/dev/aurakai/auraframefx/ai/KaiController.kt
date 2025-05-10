@@ -140,21 +140,44 @@ class KaiController @Inject constructor(
             speak("I've detected that as an advanced neural whisper command. Let me process that for you.")
         }
     }
-    
-    /**
+      /**
      * Receive information from Neural Whisper (Aura)
+     * Enhanced to handle security context information
      */
-    fun receiveFromAura(message: String, emotion: EmotionState) {
+    fun receiveFromAura(
+        message: String, 
+        emotion: EmotionState,
+        securityContext: SecurityContext? = null
+    ) {
         // Update Kai's state based on information from Aura
         updateEmotion(emotion)
         
         // Show Kai receiving information
         updateState(KaiState.THINKING)
         
-        // Process and respond
+        // Process and respond based on context and security information
         CoroutineScope(Dispatchers.Main).launch {
-            delay(1500)
-            speak("Aura has shared some context with me. I'll keep that in mind.")
+            delay(1000)
+            
+            // Handle security concerns if present
+            if (securityContext != null && securityContext.hasSecurityConcerns()) {
+                // First, speak about receiving context
+                speak("Aura has shared context with me. One moment...")
+                
+                delay(1500)
+                
+                // Then alert about security concerns
+                updateState(KaiState.ALERT)
+                speak(securityContext.getSecurityConcernsDescription(), onComplete = {
+                    updateState(KaiState.IDLE)
+                })
+            } else {
+                // Standard response when no security concerns
+                speak("Aura has shared some context with me. I'll keep that in mind.")
+            }
+            
+            // Log detailed context for debugging
+            Timber.d("Received from Aura: $message with security context: $securityContext")
         }
     }
     
