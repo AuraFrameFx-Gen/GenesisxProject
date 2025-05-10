@@ -17,7 +17,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.aurakai.auraframefx.ui.security.AuraShieldScreen
 import kotlin.math.roundToInt
 
 @Composable
@@ -40,7 +39,9 @@ fun AuraNavHost(backendUrl: String, idToken: String) {
         when (currentScreen) {
             "Menu" -> MenuScreen(
                 onMenuSelected = { currentScreen = it },
-                onPlayground = { currentScreen = "Playground" })            "UI ENGINE" -> AIFeaturesScreen(backendUrl = backendUrl, idToken = idToken)
+                onPlayground = { currentScreen = "Playground" })
+
+            "UI ENGINE" -> AIFeaturesScreen(backendUrl = backendUrl, idToken = idToken)
             "AuraShield" -> dev.aurakai.auraframefx.ui.security.AuraShieldScreen(
                 onBack = { currentScreen = "Menu" })
 

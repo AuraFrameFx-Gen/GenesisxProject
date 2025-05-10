@@ -6,8 +6,8 @@
         android:id="@+id/animation_mood_orb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:lottie_fileName="aura_mood_orb.json"
         app:lottie_autoPlay="true"
+        app:lottie_fileName="aura_mood_orb.json"
         app:lottie_loop="true" />
 
 </merge>

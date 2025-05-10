@@ -22,5 +22,5 @@
         app:lottie_autoPlay="true"
         app:lottie_fileName="kai_idle.json"
         app:lottie_loop="true" />
-        
+
 </FrameLayout>

@@ -12,14 +12,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,10 +35,10 @@ import dev.aurakai.auraframefx.ui.theme.*
 @Composable
 fun KaiToolboxScreen(
     viewModel: KaiToolboxViewModel = viewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -68,14 +66,14 @@ fun KaiToolboxScreen(
                 glowColor = NeonTealGlow,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            
+
             Text(
                 "Neural Whisper Enhanced Security",
                 fontSize = 16.sp,
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 30.dp)
             )
-            
+
             // Security Feature Cards
             SecurityFeatureCard(
                 title = "Ad Blocking",
@@ -83,38 +81,38 @@ fun KaiToolboxScreen(
                 isEnabled = viewModel.adBlockingEnabled.value,
                 onToggleChange = { viewModel.updateAdBlocking(it) }
             )
-            
+
             SecurityFeatureCard(
                 title = "RAM Optimization",
                 description = "Optimize memory usage automatically",
                 isEnabled = viewModel.ramOptimizationEnabled.value,
                 onToggleChange = { viewModel.updateRamOptimization(it) }
             )
-            
+
             SecurityFeatureCard(
                 title = "System Monitoring",
                 description = "Monitor CPU usage and battery temperature",
                 isEnabled = viewModel.systemMonitoringEnabled.value,
                 onToggleChange = { viewModel.updateSystemMonitoring(it) }
             )
-            
+
             SecurityFeatureCard(
                 title = "Error Checking",
                 description = "Detect and report system errors in real-time",
                 isEnabled = viewModel.errorCheckingEnabled.value,
                 onToggleChange = { viewModel.updateErrorChecking(it) }
             )
-            
+
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             // Notch Bar Position Control
             NotchBarPositionControl(
                 position = viewModel.notchPosition.value,
                 onPositionChange = { viewModel.updateNotchPosition(it) }
             )
-            
+
             Spacer(modifier = Modifier.height(30.dp))
-            
+
             // Ad Blocking Host List Management
             if (viewModel.adBlockingEnabled.value) {
                 AdBlockingHostList(
@@ -123,9 +121,9 @@ fun KaiToolboxScreen(
                     onRemoveHost = { viewModel.removeHostFromBlockList(it) }
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(40.dp))
-            
+
             // Back Button
             Button(
                 onClick = onBack,
@@ -150,7 +148,7 @@ fun SecurityFeatureCard(
     title: String,
     description: String,
     isEnabled: Boolean,
-    onToggleChange: (Boolean) -> Unit
+    onToggleChange: (Boolean) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -196,7 +194,7 @@ fun SecurityFeatureCard(
                     fontSize = 14.sp
                 )
             }
-            
+
             Switch(
                 checked = isEnabled,
                 onCheckedChange = onToggleChange,
@@ -214,7 +212,7 @@ fun SecurityFeatureCard(
 @Composable
 fun NotchBarPositionControl(
     position: Float,
-    onPositionChange: (Float) -> Unit
+    onPositionChange: (Float) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -245,17 +243,17 @@ fun NotchBarPositionControl(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "Adjust the position of Kai's notch bar",
                 color = Color.Gray,
                 fontSize = 14.sp
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Slider(
                 value = position,
                 onValueChange = onPositionChange,
@@ -267,7 +265,7 @@ fun NotchBarPositionControl(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -284,10 +282,10 @@ fun NotchBarPositionControl(
 fun AdBlockingHostList(
     hostList: List<String>,
     onAddHost: (String) -> Unit,
-    onRemoveHost: (String) -> Unit
+    onRemoveHost: (String) -> Unit,
 ) {
     var newHost by remember { mutableStateOf("") }
-    
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -317,17 +315,17 @@ fun AdBlockingHostList(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "Add domains to block or remove existing ones",
                 color = Color.Gray,
                 fontSize = 14.sp
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Add new host field
             OutlinedTextField(
                 value = newHost,
@@ -342,9 +340,9 @@ fun AdBlockingHostList(
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Button(
                 onClick = {
                     if (newHost.isNotEmpty()) {
@@ -359,9 +357,9 @@ fun AdBlockingHostList(
             ) {
                 Text("Add Host")
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // List of existing hosts
             Column(
                 modifier = Modifier
@@ -390,7 +388,7 @@ fun AdBlockingHostList(
                                 color = Color.White,
                                 modifier = Modifier.weight(1f)
                             )
-                            
+
                             Button(
                                 onClick = { onRemoveHost(host) },
                                 colors = ButtonDefaults.buttonColors(
@@ -403,7 +401,7 @@ fun AdBlockingHostList(
                                 Text("Remove", fontSize = 12.sp)
                             }
                         }
-                        
+
                         if (host != hostList.last()) {
                             Divider(
                                 color = Color.DarkGray.copy(alpha = 0.5f),

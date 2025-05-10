@@ -2,8 +2,6 @@ package dev.aurakai.auraframefx.ui.animation
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
-import android.content.Context
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
@@ -43,7 +41,7 @@ object NeuralWhisperShowcase {
             val moodOrb = rootView.findViewById<AuraMoodOrb>(R.id.aura_mood_orb)
             val conversationCard = rootView.findViewById<CardView>(R.id.card_conversation)
             val emotionText = rootView.findViewById<TextView>(R.id.text_emotion)
-            
+
             // Initial state
             title.alpha = 0f
             subtitle.alpha = 0f
@@ -52,7 +50,7 @@ object NeuralWhisperShowcase {
             moodOrb.alpha = 0f
             conversationCard.alpha = 0f
             emotionText.alpha = 0f
-            
+
             // Animation sequence
             CoroutineScope(Dispatchers.Main).launch {
                 // 1. Fade in title with slight bounce
@@ -68,21 +66,21 @@ object NeuralWhisperShowcase {
                     playTogether(titleAnim, titleMove)
                     start()
                 }
-                
+
                 delay(500)
-                
+
                 // 2. Fade in subtitle
                 ObjectAnimator.ofFloat(subtitle, "alpha", 0f, 1f).apply {
                     duration = 600
                     start()
                 }
-                
+
                 delay(400)
-                
+
                 // 3. Reveal the voice wave animation
                 animationView.visibility = View.VISIBLE
                 moodOrb.visibility = View.GONE
-                
+
                 ObjectAnimator.ofFloat(animationView, "alpha", 0f, 1f).apply {
                     duration = 1200
                     start()
@@ -97,49 +95,49 @@ object NeuralWhisperShowcase {
                     interpolator = OvershootInterpolator()
                     start()
                 }
-                
+
                 animationView.playAnimation()
-                
+
                 delay(1000)
-                
+
                 // 4. Show status text
-                val statusAnim = ObjectAnimator.ofFloat(statusText, "alpha", 0f, 1f).apply {
+                ObjectAnimator.ofFloat(statusText, "alpha", 0f, 1f).apply {
                     duration = 600
                     start()
                 }
-                
+
                 delay(800)
-                
+
                 // 5. Fade in conversation card
                 ObjectAnimator.ofFloat(conversationCard, "alpha", 0f, 1f).apply {
                     duration = 800
                     start()
                 }
-                
+
                 delay(300)
-                
+
                 // 6. Show emotion text
                 ObjectAnimator.ofFloat(emotionText, "alpha", 0f, 1f).apply {
                     duration = 600
                     start()
                 }
-                
+
                 delay(600)
-                
+
                 // 7. Switch to mood orb with transition
                 val fadeOutWaves = ObjectAnimator.ofFloat(animationView, "alpha", 1f, 0f).apply {
                     duration = 600
                 }
-                
+
                 fadeOutWaves.doOnEnd {
                     animationView.visibility = View.GONE
                     moodOrb.visibility = View.VISIBLE
-                    
+
                     ObjectAnimator.ofFloat(moodOrb, "alpha", 0f, 1f).apply {
                         duration = 800
                         start()
                     }
-                    
+
                     ObjectAnimator.ofFloat(moodOrb, "scaleX", 0.7f, 1.1f, 1.0f).apply {
                         duration = 1000
                         interpolator = OvershootInterpolator()
@@ -151,19 +149,19 @@ object NeuralWhisperShowcase {
                         start()
                     }
                 }
-                
+
                 fadeOutWaves.start()
-                
+
                 // Wait for entire sequence to complete
                 delay(1500)
-                
+
                 // Complete callback
                 onComplete()
             }
-            
+
         } catch (e: Exception) {
             Timber.e(e, "Error playing showcase animation")
-            
+
             // Ensure completion callback is called even on error
             onComplete()
         }

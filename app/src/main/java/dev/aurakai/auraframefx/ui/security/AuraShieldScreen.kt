@@ -10,7 +10,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,11 +31,11 @@ import dev.aurakai.auraframefx.ui.theme.*
  */
 @Composable
 fun AuraShieldScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     var showKaiToolbox by remember { mutableStateOf(false) }
-    
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -69,24 +68,24 @@ fun AuraShieldScreen(
                     glowColor = NeonPurpleGlow,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                
+
                 Text(
                     "Security & Privacy Center",
                     fontSize = 18.sp,
                     color = Color.White,
                     modifier = Modifier.padding(bottom = 36.dp)
                 )
-                
+
                 // Kai Toolbox Card
                 SecurityFeatureCard(
                     title = "Kai Security Toolbox",
                     description = "Configure Kai's security features and settings",
                     iconResId = R.drawable.ic_kai_settings,
-                    onClick = { 
-                        showKaiToolbox = true 
+                    onClick = {
+                        showKaiToolbox = true
                     }
                 )
-                
+
                 // Other security cards
                 SecurityFeatureCard(
                     title = "Network Protection",
@@ -94,23 +93,23 @@ fun AuraShieldScreen(
                     iconResId = R.drawable.ic_network_shield,
                     onClick = { /* Open network protection settings */ }
                 )
-                
+
                 SecurityFeatureCard(
                     title = "Data Privacy",
                     description = "Control what data is shared with AI assistants",
                     iconResId = R.drawable.ic_privacy_shield,
                     onClick = { /* Open data privacy settings */ }
                 )
-                
+
                 SecurityFeatureCard(
                     title = "Conversation Security",
                     description = "Manage encryption and security for Neural Whisper",
                     iconResId = R.drawable.ic_conversation_secure,
                     onClick = { /* Open conversation security settings */ }
                 )
-                
+
                 Spacer(modifier = Modifier.height(36.dp))
-                
+
                 // Security Status Section
                 Column(
                     modifier = Modifier
@@ -126,12 +125,12 @@ fun AuraShieldScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
-                    
+
                     Divider(
                         color = Color.Gray.copy(alpha = 0.3f),
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -141,7 +140,7 @@ fun AuraShieldScreen(
                         Text("Neural Whisper", color = Color.White)
                         Text("PROTECTED", color = NeonTeal)
                     }
-                    
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -151,7 +150,7 @@ fun AuraShieldScreen(
                         Text("Kai Assistant", color = Color.White)
                         Text("PROTECTED", color = NeonTeal)
                     }
-                    
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -161,7 +160,7 @@ fun AuraShieldScreen(
                         Text("Network Activity", color = Color.White)
                         Text("MONITORING", color = NeonPink)
                     }
-                    
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -172,9 +171,9 @@ fun AuraShieldScreen(
                         Text("2 HOURS AGO", color = Color.White.copy(alpha = 0.6f))
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(32.dp))
-                
+
                 // Back button
                 Text(
                     "Back to Menu",
@@ -195,7 +194,7 @@ fun SecurityFeatureCard(
     title: String,
     description: String,
     iconResId: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -230,7 +229,10 @@ fun SecurityFeatureCard(
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .background(NeonPurple.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp)),
+                        .background(
+                            NeonPurple.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(8.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -241,9 +243,9 @@ fun SecurityFeatureCard(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -251,9 +253,9 @@ fun SecurityFeatureCard(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 Text(
                     text = description,
                     color = Color.Gray,

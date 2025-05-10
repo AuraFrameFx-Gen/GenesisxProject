@@ -23,6 +23,9 @@ plugins {
     id("kotlin-kapt")
 }
 
+// Apply the native libraries configuration
+apply(from = "native-libs.gradle.kts")
+
 android {
     namespace = "dev.aurakai.auraframefx"
     compileSdk = 34
@@ -60,7 +63,12 @@ android {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile", "keystore/default.jks"))
+                storeFile = rootProject.file(
+                    keystoreProperties.getProperty(
+                        "storeFile",
+                        "keystore/default.jks"
+                    )
+                )
                 storePassword = keystoreProperties.getProperty("storePassword")
             }
         }
@@ -73,6 +81,16 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             applicationIdSuffix = ".debug"
+            
+            // Use a different approach for handling debug symbols
+            // Instead of trying to modify keepDebugSymbols directly
+            packaging {
+                jniLibs {
+                    // Use exclude instead as it's better supported
+                    excludes.add("**/libAuraFrameFX.so")
+                    excludes.add("**/libaura-fx-lib.so")
+                }
+            }
         }
         release {
             isMinifyEnabled = true
@@ -128,21 +146,30 @@ android {
 
     packaging {
         resources {
-            excludes.addAll(listOf(
-                "/META-INF/{AL2.0,LGPL2.1}",
-                "META-INF/DEPENDENCIES",
-                "META-INF/LICENSE*",
-                "META-INF/NOTICE*",
-                "META-INF/ASL2.0",
-                "META-INF/*.kotlin_module",
-                "META-INF/versions/9/previous-compilation-data.bin",
-                "**/attach_hotspot_api.dll",
-                "DebugProbesKt.bin"
-            ))
+            excludes.addAll(
+                listOf(
+                    "/META-INF/{AL2.0,LGPL2.1}",
+                    "META-INF/DEPENDENCIES",
+                    "META-INF/LICENSE*",
+                    "META-INF/NOTICE*",
+                    "META-INF/ASL2.0",
+                    "META-INF/*.kotlin_module",
+                    "META-INF/versions/9/previous-compilation-data.bin",
+                    "**/attach_hotspot_api.dll",
+                    "DebugProbesKt.bin"
+                )
+            )
         }
         jniLibs {
             pickFirsts.add("**/libc++_shared.so")
             useLegacyPackaging = false
+            
+            // Replace += operator with add() method for better compatibility
+            excludes.add("**/libAuraFrameFX.so")
+            excludes.add("**/libaura-fx-lib.so")
+            
+            // Remove the keepDebugSymbols line as it might not be supported
+            // in your Gradle version or AGP version
         }
     }
 
@@ -173,7 +200,7 @@ android {
 dependencies {
     // Place coreLibraryDesugaring first to ensure it's not blocked
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-    
+
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
@@ -189,11 +216,11 @@ dependencies {
 
     // Material design
     implementation(libs.material)
-    
+
     // Firebase dependencies - use version catalog references
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.vertexai)
-    
+
     // Other Firebase dependencies remain commented
     // implementation(libs.firebase.analytics.ktx)
     // implementation(libs.firebase.firestore.ktx)

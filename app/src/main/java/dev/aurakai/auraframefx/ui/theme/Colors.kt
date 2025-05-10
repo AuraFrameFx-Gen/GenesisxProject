@@ -75,5 +75,6 @@ fun lightColorScheme(): ColorScheme = ColorScheme(
     inverseOnSurface = LightInverseOnSurface,
     inverseSurface = LightInverseSurface,
     inversePrimary = LightInversePrimary
-            onSurface = NeonPurple
 )
+
+val someColor = Color(0xFF000000)  // Replace with actual color value

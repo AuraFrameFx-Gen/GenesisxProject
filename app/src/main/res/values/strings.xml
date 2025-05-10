@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AuraFrameFX</string>
-    
+
     <!-- Neural Whisper Feature Strings -->
     <string name="neural_whisper_title">NEURAL WHISPER</string>
     <string name="neural_whisper_subtitle">Emotional Voice Command System</string>
     <string name="neural_whisper_tap_to_activate">Tap microphone to activate Neural Whisper</string>
     <string name="neural_whisper_listening">Listening... speak now</string>
     <string name="neural_whisper_processing">Processing your command...</string>
-    <string name="neural_whisper_permission_required">Microphone permission is required for Neural Whisper</string>    <string name="neural_whisper_permission_rationale">Neural Whisper needs microphone access to process voice commands</string>
+    <string name="neural_whisper_permission_required">Microphone permission is required for Neural Whisper</string>
+    <string name="neural_whisper_permission_rationale">Neural Whisper needs microphone access to process voice commands</string>
     <string name="neural_whisper_activate">Activate Neural Whisper</string>
-    
+
     <!-- Xposed Module Description -->
     <string name="xposed_description">AuraFrameFX enhances system UI with KaiNotchBar features and powerful security toolbox</string>
 </resources>

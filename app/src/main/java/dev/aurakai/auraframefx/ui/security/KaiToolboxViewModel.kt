@@ -4,12 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import dev.aurakai.auraframefx.ai.KaiController
-import dev.aurakai.auraframefx.ui.components.KaiNotchBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -17,7 +13,7 @@ import javax.inject.Inject
  * ViewModel for managing Kai security toolbox settings
  */
 class KaiToolboxViewModel @Inject constructor(
-    private val kaiController: KaiController? = null
+    private val kaiController: KaiController? = null,
 ) : ViewModel() {
 
     // Toggle states for security features
@@ -36,7 +32,7 @@ class KaiToolboxViewModel @Inject constructor(
     // Notch position (0.0 = top, 1.0 = bottom)
     private val _notchPosition = mutableStateOf(0.0f)
     val notchPosition: State<Float> = _notchPosition
-    
+
     // Ad blocking host list
     private val _adBlockingHosts = mutableStateOf<List<String>>(
         listOf(
@@ -66,7 +62,7 @@ class KaiToolboxViewModel @Inject constructor(
     fun updateAdBlocking(enabled: Boolean) {
         _adBlockingEnabled.value = enabled
         kaiController?.getKaiNotchBar()?.adBlockEnabled = enabled
-        
+
         if (enabled) {
             kaiController?.getKaiNotchBar()?.startAdBlocker()
         } else {
@@ -77,7 +73,7 @@ class KaiToolboxViewModel @Inject constructor(
     fun updateRamOptimization(enabled: Boolean) {
         _ramOptimizationEnabled.value = enabled
         kaiController?.getKaiNotchBar()?.ramOptimizationEnabled = enabled
-        
+
         if (enabled) {
             kaiController?.getKaiNotchBar()?.startRamOptimizer()
         } else {
@@ -88,7 +84,7 @@ class KaiToolboxViewModel @Inject constructor(
     fun updateSystemMonitoring(enabled: Boolean) {
         _systemMonitoringEnabled.value = enabled
         kaiController?.getKaiNotchBar()?.systemMonitoringEnabled = enabled
-        
+
         if (enabled) {
             kaiController?.getKaiNotchBar()?.startSystemMonitor()
         } else {
@@ -99,30 +95,30 @@ class KaiToolboxViewModel @Inject constructor(
     fun updateErrorChecking(enabled: Boolean) {
         _errorCheckingEnabled.value = enabled
         kaiController?.getKaiNotchBar()?.errorCheckingEnabled = enabled
-        
+
         if (enabled) {
             kaiController?.getKaiNotchBar()?.startErrorChecker()
         } else {
             kaiController?.getKaiNotchBar()?.stopErrorChecker()
         }
     }
-    
+
     fun updateNotchPosition(position: Float) {
         _notchPosition.value = position
         kaiController?.getKaiNotchBar()?.notchPosition = position
         kaiController?.getKaiNotchBar()?.updateNotchPosition()
     }
-    
+
     fun addHostToBlockList(host: String) {
         if (host.isNotEmpty()) {
             val currentList = _adBlockingHosts.value.toMutableList()
             if (!currentList.contains(host)) {
                 currentList.add(host)
                 _adBlockingHosts.value = currentList
-                
+
                 kaiController?.getKaiNotchBar()?.let { kaiNotchBar ->
                     kaiNotchBar.blockedHosts.add(host)
-                    
+
                     if (kaiNotchBar.adBlockEnabled) {
                         kaiNotchBar.updateAdBlocker()
                     }
@@ -130,16 +126,16 @@ class KaiToolboxViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun removeHostFromBlockList(host: String) {
         val currentList = _adBlockingHosts.value.toMutableList()
         if (currentList.contains(host)) {
             currentList.remove(host)
             _adBlockingHosts.value = currentList
-            
+
             kaiController?.getKaiNotchBar()?.let { kaiNotchBar ->
                 kaiNotchBar.blockedHosts.remove(host)
-                
+
                 if (kaiNotchBar.adBlockEnabled) {
                     kaiNotchBar.updateAdBlocker()
                 }

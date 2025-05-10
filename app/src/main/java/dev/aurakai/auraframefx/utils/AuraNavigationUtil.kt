@@ -1,7 +1,6 @@
 package dev.aurakai.auraframefx.utils
 
 import android.content.Context
-import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import dev.aurakai.auraframefx.ai.NeuralWhisper
@@ -22,21 +21,21 @@ object AuraNavigationUtil {
     fun navigateToNeuralWhisper(
         activity: FragmentActivity,
         navController: NavController,
-        triggerListening: Boolean = false
+        triggerListening: Boolean = false,
     ) {
         try {
             // Navigate to Neural Whisper fragment
             // In a real implementation, this would use proper navigation component
             // with a direction like: navController.navigate(R.id.action_to_neural_whisper)
-            
+
             // For now we'll just log the intent
             Timber.d("Navigating to Neural Whisper feature")
-            
+
             // If immediate listening requested, start it
             if (triggerListening) {
                 val neuralWhisper = activity.application
                     .getSystemService("neural_whisper_service") as? NeuralWhisper
-                
+
                 neuralWhisper?.startListening()
             }
         } catch (e: Exception) {
@@ -54,7 +53,7 @@ object AuraNavigationUtil {
         try {
             val neuralWhisper = context.applicationContext
                 .getSystemService("neural_whisper_service") as? NeuralWhisper
-            
+
             neuralWhisper?.toggleAmbientMood(show)
         } catch (e: Exception) {
             Timber.e(e, "Error toggling ambient mood orb: ${e.message}")

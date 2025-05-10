@@ -37,14 +37,14 @@ import java.util.Locale
 
 /**
  * Neural Whisper Fragment
- * 
+ *
  * Provides an interface for interacting with the Neural Whisper AI voice command system
  * Created by Claude-3 Opus (Anthropic) for AuraFrameFX
  */
 @AndroidEntryPoint
 class NeuralWhisperFragment : Fragment() {
-    
-    private val viewModel: NeuralWhisperViewModel by viewModels()    
+
+    private val viewModel: NeuralWhisperViewModel by viewModels()
     private lateinit var statusText: TextView
     private lateinit var conversationText: TextView
     private lateinit var emotionText: TextView
@@ -53,10 +53,10 @@ class NeuralWhisperFragment : Fragment() {
     private lateinit var auraMoodOrb: AuraMoodOrb
     private lateinit var animationContainer: FrameLayout
     private lateinit var shareWithKaiButton: Button
-    
+
     // Track if this is the first launch to show showcase
     private var isFirstLaunch = true
-    
+
     // Request microphone permission
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -71,18 +71,18 @@ class NeuralWhisperFragment : Fragment() {
             ).show()
         }
     }
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_neural_whisper, container, false)
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         // Initialize views
         statusText = view.findViewById(R.id.text_status)
         conversationText = view.findViewById(R.id.text_conversation)
@@ -92,35 +92,35 @@ class NeuralWhisperFragment : Fragment() {
         animationContainer = view.findViewById(R.id.animation_container)
         activateButton = view.findViewById(R.id.btn_activate)
         shareWithKaiButton = view.findViewById(R.id.btn_share_with_kai)
-        
+
         // Set up click listener for activation button
         activateButton.setOnClickListener {
             checkMicrophonePermission()
         }
-        
+
         // Set up click listener for share with Kai button
         shareWithKaiButton.setOnClickListener {
             shareCurrentContextWithKai()
         }
-        
+
         // Set up long press listener to toggle between wave and mood orb
         animationContainer.setOnLongClickListener {
             toggleAnimationMode()
             true
         }
-        
+
         // Show showcase animation on first launch
         if (isFirstLaunch) {
             // Hide all views initially for animation
             view.alpha = 0f
-            
+
             view.postDelayed({
                 view.alpha = 1f
                 showFirstLaunchShowcase()
                 isFirstLaunch = false
             }, 500)
         }
-        
+
         // Observe conversation state
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -129,11 +129,11 @@ class NeuralWhisperFragment : Fragment() {
                 }
             }
         }
-          // Observe emotion state
-        viewModel.emotionState.observe(viewLifecycleOwner) { emotion -> 
+        // Observe emotion state
+        viewModel.emotionState.observe(viewLifecycleOwner) { emotion ->
             updateEmotionUi(emotion)
         }
-        
+
         // Observe context sharing with Kai
         viewModel.contextSharedWithKai.observe(viewLifecycleOwner) { isShared ->
             if (isShared) {
@@ -141,7 +141,7 @@ class NeuralWhisperFragment : Fragment() {
             }
         }
     }
-    
+
     private fun checkMicrophonePermission() {
         when {
             ContextCompat.checkSelfPermission(
@@ -150,6 +150,7 @@ class NeuralWhisperFragment : Fragment() {
             ) == PackageManager.PERMISSION_GRANTED -> {
                 startListening()
             }
+
             shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO) -> {
                 Toast.makeText(
                     requireContext(),
@@ -158,12 +159,13 @@ class NeuralWhisperFragment : Fragment() {
                 ).show()
                 requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
             }
+
             else -> {
                 requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
             }
         }
     }
-    
+
     private fun startListening() {
         try {
             viewModel.startListening()
@@ -176,61 +178,61 @@ class NeuralWhisperFragment : Fragment() {
             ).show()
         }
     }
-    
+
     private fun updateUiForState(state: ConversationState) {
         when (state) {
             is ConversationState.Idle -> {
                 statusText.text = "Tap microphone to activate Neural Whisper"
                 animationView.pauseAnimation()
                 activateButton.isEnabled = true
-                
+
                 // Show mood orb in idle state
                 if (!auraMoodOrb.isVisible && animationView.isVisible) {
                     toggleAnimationMode()
                 }
             }
-            
+
             is ConversationState.Listening -> {
                 statusText.text = "Listening... speak now"
-                
+
                 // Show voice waves while listening
                 if (!animationView.isVisible) {
                     toggleAnimationMode()
                 }
-                
+
                 animationView.playAnimation()
                 activateButton.isEnabled = false
             }
-            
+
             is ConversationState.Processing -> {
                 statusText.text = "Processing your command..."
                 animationView.playAnimation()
                 activateButton.isEnabled = false
             }
-            
+
             is ConversationState.Ready -> {
                 statusText.text = "Command processed"
                 animationView.pauseAnimation()
                 activateButton.isEnabled = true
-                
+
                 // Add the response to the conversation
                 val timestamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
                 val conversationEntry = "[$timestamp] You: ${viewModel.lastUserInput}\n" +
                         "[$timestamp] Neural Whisper: ${state.response}\n\n"
-                
+
                 conversationText.append(conversationEntry)
-                
+
                 // Show mood orb after processing
                 if (!auraMoodOrb.isVisible) {
                     toggleAnimationMode()
                 }
             }
-            
+
             is ConversationState.Error -> {
                 statusText.text = "Error: ${state.message}"
                 animationView.pauseAnimation()
                 activateButton.isEnabled = true
-                
+
                 Toast.makeText(
                     requireContext(),
                     "Error: ${state.message}",
@@ -239,7 +241,7 @@ class NeuralWhisperFragment : Fragment() {
             }
         }
     }
-    
+
     /**
      * Toggles between voice wave animation and mood orb display
      */
@@ -253,20 +255,20 @@ class NeuralWhisperFragment : Fragment() {
             animationView.visibility = View.VISIBLE
         }
     }
-    
+
     /**
      * Show the first launch showcase animation
      */
     private fun showFirstLaunchShowcase() {
         // Disable button during showcase
         activateButton.isEnabled = false
-        
+
         // Run showcase animation
         view?.let { rootView ->
             NeuralWhisperShowcase.playShowcaseAnimation(rootView) {
                 // After animation completes, enable the button
                 activateButton.isEnabled = true
-                
+
                 // Show a welcome toast
                 context?.let { ctx ->
                     Toast.makeText(
@@ -278,7 +280,7 @@ class NeuralWhisperFragment : Fragment() {
             }
         }
     }
-    
+
     private fun updateEmotionUi(emotion: EmotionState) {
         val emotionText = when (emotion) {
             EmotionState.Excited -> "EMOTION: EXCITED"
@@ -287,7 +289,7 @@ class NeuralWhisperFragment : Fragment() {
             EmotionState.Concerned -> "EMOTION: CONCERNED"
             EmotionState.Frustrated -> "EMOTION: FRUSTRATED"
         }
-        
+
         val emotionColor = when (emotion) {
             EmotionState.Excited -> "#FF00FF" // Magenta
             EmotionState.Happy -> "#33FF33" // Green
@@ -295,30 +297,32 @@ class NeuralWhisperFragment : Fragment() {
             EmotionState.Concerned -> "#FFA500" // Orange
             EmotionState.Frustrated -> "#FF0000" // Red
         }
-        
+
         this.emotionText.text = emotionText
         this.emotionText.setTextColor(android.graphics.Color.parseColor(emotionColor))
-        
+
         // Update the theme based on emotion
-        activity?.let { 
+        activity?.let {
             AuraThemeManager.applyEmotionalTheme(it, emotion)
-            
+
             // Apply glow effect to conversation card
             view?.findViewById<View>(R.id.card_conversation)?.let { card ->
                 AuraThemeManager.applyEmotionalGlow(card, emotion)
             }
         }
-        
+
         // Update the mood orb with current emotion (if visible)
         if (auraMoodOrb.isVisible) {
             auraMoodOrb.setEmotion(emotion)
         }
-    }    /**
+    }
+
+    /**
      * Share current conversation context with Kai for enhanced security
      */
     private fun shareCurrentContextWithKai() {
         viewModel.shareContextWithKai()
-        
+
         // More refined feedback with progress dialog
         val progressDialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Neural Bridge Active")
@@ -326,33 +330,33 @@ class NeuralWhisperFragment : Fragment() {
             .setIcon(R.drawable.ic_neural_bridge)
             .setCancelable(false)
             .create()
-        
+
         progressDialog.show()
-        
+
         // Visual feedback animation - pulse the animation view
         animationView.speed = 1.5f
         animationView.playAnimation()
-        
+
         // Update UI to show interaction between Aura and Kai
         statusText.text = "Neural bridge with Kai established..."
-        
+
         // Reset status after a delay and dismiss dialog
         lifecycleScope.launch {
             delay(1800)
             progressDialog.dismiss()
-            
+
             // Show success confirmation
             Toast.makeText(
                 requireContext(),
                 "Context successfully shared with Kai security system",
                 Toast.LENGTH_SHORT
             ).show()
-            
+
             animationView.speed = 1.0f
             statusText.text = "Ready for your command"
         }
     }
-    
+
     /**
      * Provide visual feedback when context is shared with Kai
      */
@@ -364,22 +368,24 @@ class NeuralWhisperFragment : Fragment() {
             val alpha = it.animatedValue as Float
             shareWithKaiButton.alpha = 1f - (alpha * 0.5f)
         }
-        
+
         // Flash button and add a ripple effect
         shareWithKaiButton.isPressed = true
         valueAnimator.start()
-        
+
         // Add ripple effect
         shareWithKaiButton.post {
             shareWithKaiButton.isPressed = false
-            
+
             // Show message in conversation
             val timestamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-            val sharedMessage = "[$timestamp] Context shared with Kai for enhanced security monitoring\n"
+            val sharedMessage =
+                "[$timestamp] Context shared with Kai for enhanced security monitoring\n"
             conversationText.append(sharedMessage)
-            
+
             // Ensure we scroll to the bottom
-            val scrollAmount = conversationText.layout.getLineTop(conversationText.lineCount) - conversationText.height
+            val scrollAmount =
+                conversationText.layout.getLineTop(conversationText.lineCount) - conversationText.height
             if (scrollAmount > 0) {
                 conversationText.scrollTo(0, scrollAmount)
             }

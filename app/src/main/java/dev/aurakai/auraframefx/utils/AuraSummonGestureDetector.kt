@@ -9,29 +9,29 @@ import timber.log.Timber
 
 /**
  * Gesture detector to summon Aura's Neural Whisper from anywhere in the app
- * 
+ *
  * This class detects specific gestures to activate Neural Whisper without
  * needing to navigate through menus.
  */
 class AuraSummonGestureDetector(
     context: Context,
     private val activity: FragmentActivity?,
-    private val navController: NavController?
+    private val navController: NavController?,
 ) : GestureDetector.SimpleOnGestureListener() {
-    
+
     private val gestureDetector = GestureDetector(context, this)
-    
+
     // Track gesture state
     private var isMultiFingerGestureInProgress = false
     private var initialY = 0f
-    
+
     /**
      * Process touch events to detect summoning gestures
      */
     fun onTouchEvent(event: MotionEvent): Boolean {
         return gestureDetector.onTouchEvent(event) || handleMultiFingerGestures(event)
     }
-    
+
     /**
      * Handle multi-finger gestures (two-finger swipe down to summon)
      */
@@ -44,11 +44,11 @@ class AuraSummonGestureDetector(
                     return true
                 }
             }
-            
+
             MotionEvent.ACTION_MOVE -> {
                 if (isMultiFingerGestureInProgress && event.pointerCount == 2) {
                     val deltaY = event.getY(0) - initialY
-                    
+
                     // Detect downward swipe (summon)
                     if (deltaY > SUMMON_THRESHOLD_PX) {
                         isMultiFingerGestureInProgress = false
@@ -57,15 +57,15 @@ class AuraSummonGestureDetector(
                     }
                 }
             }
-            
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_CANCEL -> {
                 isMultiFingerGestureInProgress = false
             }
         }
-        
+
         return false
     }
-    
+
     /**
      * Handle double tap to toggle mood orb
      */
@@ -76,13 +76,13 @@ class AuraSummonGestureDetector(
         }
         return true
     }
-    
+
     /**
      * Called when a summoning gesture is detected
      */
     private fun onSummonGestureDetected() {
         Timber.d("Aura summoning gesture detected!")
-        
+
         activity?.let { fragmentActivity ->
             navController?.let { nav ->
                 AuraNavigationUtil.navigateToNeuralWhisper(
@@ -93,7 +93,7 @@ class AuraSummonGestureDetector(
             }
         }
     }
-    
+
     companion object {
         private const val SUMMON_THRESHOLD_PX = 200f
     }

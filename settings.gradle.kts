@@ -12,7 +12,7 @@ dependencyResolutionManagement {
         google()  // This should include the Firebase artifacts
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
-        
+
         // Add the maven.google.com repository explicitly as an alternative
         maven { url = uri("https://maven.google.com") }
     }

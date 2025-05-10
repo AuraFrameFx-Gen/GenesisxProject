@@ -16,16 +16,16 @@ import javax.inject.Singleton
  */
 @Singleton
 class KaiController @Inject constructor(
-    private val neuralWhisper: NeuralWhisper
+    private val neuralWhisper: NeuralWhisper,
 ) {
     // Kai's notch bar UI component
     private var kaiNotchBar: KaiNotchBar? = null
-    
+
     // Kai's current state
     private var isActive = false
     private var currentState = KaiState.IDLE
     private var currentEmotion = EmotionState.Neutral
-    
+
     // Interaction listener for Kai
     private val kaiInteractionListener = object : KaiNotchBar.OnKaiInteractionListener {
         override fun onKaiTapped() {
@@ -46,7 +46,7 @@ class KaiController @Inject constructor(
             Timber.d("Kai swiped right")
         }
     }
-    
+
     /**
      * Get the KaiNotchBar instance
      * Used by KaiToolboxViewModel to access and update KaiNotchBar settings
@@ -54,13 +54,13 @@ class KaiController @Inject constructor(
     fun getKaiNotchBar(): KaiNotchBar? {
         return kaiNotchBar
     }
-    
+
     /**
      * Initialize Kai and attach to window
      */
     fun initialize(context: Context) {
         if (kaiNotchBar != null) return
-        
+
         try {
             kaiNotchBar = KaiNotchBar(context).apply {
                 onInteractionListener = kaiInteractionListener
@@ -72,7 +72,7 @@ class KaiController @Inject constructor(
             Timber.e(e, "Failed to initialize KaiController")
         }
     }
-    
+
     /**
      * Destroy Kai and remove from window
      */
@@ -82,7 +82,7 @@ class KaiController @Inject constructor(
         isActive = false
         Timber.d("KaiController destroyed")
     }
-    
+
     /**
      * Update Kai's state
      */
@@ -91,7 +91,7 @@ class KaiController @Inject constructor(
         currentState = state
         kaiNotchBar?.updateState(KaiNotchBar.KaiState.valueOf(state.name))
     }
-    
+
     /**
      * Update Kai's emotion
      */
@@ -100,7 +100,7 @@ class KaiController @Inject constructor(
         currentEmotion = emotion
         kaiNotchBar?.updateEmotion(emotion)
     }
-    
+
     /**
      * Make Kai speak a message
      */
@@ -111,35 +111,35 @@ class KaiController @Inject constructor(
             onComplete()
         }
     }
-    
+
     /**
      * Handle tap interaction
      */
     private fun handleKaiTap() {
         Timber.d("Kai tapped")
-        
+
         // Show a quick alert state
         updateState(KaiState.ALERT)
-        
+
         // Example interaction: Have Kai whisper to Aura
         CoroutineScope(Dispatchers.Main).launch {
             delay(500)
             updateState(KaiState.IDLE)
-            
+
             // Notify Neural Whisper that Kai was activated
             neuralWhisper.onKaiActivated()
         }
     }
-    
+
     /**
      * Handle long press interaction
      */
     private fun handleKaiLongPress() {
         Timber.d("Kai long pressed")
-        
+
         // Example: Start listening mode
         updateState(KaiState.LISTENING)
-        
+
         // In a real implementation, this would start voice recognition
         CoroutineScope(Dispatchers.Main).launch {
             delay(3000) // Simulate listening
@@ -148,32 +148,33 @@ class KaiController @Inject constructor(
             speak("I've detected that as an advanced neural whisper command. Let me process that for you.")
         }
     }
-      /**
+
+    /**
      * Receive information from Neural Whisper (Aura)
      * Enhanced to handle security context information
      */
     fun receiveFromAura(
-        message: String, 
+        message: String,
         emotion: EmotionState,
-        securityContext: SecurityContext? = null
+        securityContext: SecurityContext? = null,
     ) {
         // Update Kai's state based on information from Aura
         updateEmotion(emotion)
-        
+
         // Show Kai receiving information
         updateState(KaiState.THINKING)
-        
+
         // Process and respond based on context and security information
         CoroutineScope(Dispatchers.Main).launch {
             delay(1000)
-            
+
             // Handle security concerns if present
             if (securityContext != null && securityContext.hasSecurityConcerns()) {
                 // First, speak about receiving context
                 speak("Aura has shared context with me. One moment...")
-                
+
                 delay(1500)
-                
+
                 // Then alert about security concerns
                 updateState(KaiState.ALERT)
                 speak(securityContext.getSecurityConcernsDescription(), onComplete = {
@@ -183,12 +184,12 @@ class KaiController @Inject constructor(
                 // Standard response when no security concerns
                 speak("Aura has shared some context with me. I'll keep that in mind.")
             }
-            
+
             // Log detailed context for debugging
             Timber.d("Received from Aura: $message with security context: $securityContext")
         }
     }
-    
+
     /**
      * Possible states for Kai
      */

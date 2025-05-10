@@ -13,19 +13,19 @@ import javax.inject.Singleton
 
 /**
  * Dependency injection module for Neural Whisper
- * 
+ *
  * Created by Claude-3 Opus (Anthropic) for AuraFrameFX
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object NeuralWhisperModule {
-    
+
     @Provides
     @Singleton
     fun provideNeuralWhisper(
         @ApplicationContext context: Context,
         vertexAI: VertexAI,
-        generativeModel: GenerativeModel
+        generativeModel: GenerativeModel,
     ): NeuralWhisper {
         return NeuralWhisper(context, vertexAI, generativeModel)
     }
