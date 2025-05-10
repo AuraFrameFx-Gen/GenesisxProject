@@ -6,6 +6,7 @@ import androidx.startup.Initializer
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.aurakai.auraframefx.BuildConfig
 import dev.aurakai.auraframefx.ai.KaiController
 import timber.log.Timber
 import javax.inject.Inject

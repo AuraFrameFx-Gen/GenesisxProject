@@ -27,6 +27,7 @@ import dev.aurakai.auraframefx.ai.EmotionState
 import dev.aurakai.auraframefx.ui.animation.NeuralWhisperShowcase
 import dev.aurakai.auraframefx.ui.components.AuraMoodOrb
 import dev.aurakai.auraframefx.ui.theme.AuraThemeManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -306,13 +307,25 @@ class NeuralWhisperFragment : Fragment() {
             auraMoodOrb.setEmotion(emotion)
         }
     }
-    
-    private fun shareCurrentContextWithKai() {
-        // Implement the logic to share the current context with Kai
+      private fun shareCurrentContextWithKai() {
+        viewModel.shareContextWithKai()
+        
         Toast.makeText(
             requireContext(),
             "Sharing current context with Kai...",
             Toast.LENGTH_SHORT
         ).show()
+        
+        // Visual feedback animation
+        animationView.playAnimation()
+        
+        // Update UI to show interaction between Aura and Kai
+        statusText.text = "Sharing context with Kai..."
+        
+        // Reset status after a delay
+        lifecycleScope.launch {
+            delay(2500)
+            statusText.text = "Ready for your command"
+        }
     }
 }

@@ -367,6 +367,95 @@ class NeuralWhisper @Inject constructor(
                 .filter { it.length > 2 && it !in commonWords }
         }
     }
+
+    /**
+     * Start audio recording for voice input
+     */
+    private fun startAudioRecording(): AudioRecord? {
+        try {
+            val sampleRate = 16000
+            val channelConfig = AudioFormat.CHANNEL_IN_MONO
+            val audioFormat = AudioFormat.ENCODING_PCM_16BIT
+            
+            val bufferSize = AudioRecord.getMinBufferSize(
+                sampleRate, channelConfig, audioFormat
+            )
+            
+            if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
+                Timber.e("Invalid buffer size for audio recording")
+                return null
+            }
+            
+            val audioRecord = AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                sampleRate,
+                channelConfig,
+                audioFormat,
+                bufferSize
+            )
+            
+            if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
+                Timber.e("Audio Record failed to initialize")
+                return null
+            }
+            
+            audioRecord.startRecording()
+            return audioRecord
+            
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to start audio recording")
+            return null
+        }
+    }
+    
+    /**
+     * Process the recorded audio and save to a file
+     */
+    private fun processAudioToFile(audioRecord: AudioRecord): File? {
+        try {
+            val bufferSize = AudioRecord.getMinBufferSize(
+                16000,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT
+            )
+            
+            val outputFile = File(context.cacheDir, "neural_whisper_audio_${System.currentTimeMillis()}.pcm")
+            val data = ByteArray(bufferSize)
+            val outputStream = FileOutputStream(outputFile)
+            
+            // Record for 5 seconds max
+            val recordTimeMs = 5000L
+            val startTime = System.currentTimeMillis()
+            
+            while (System.currentTimeMillis() - startTime < recordTimeMs) {
+                val read = audioRecord.read(data, 0, bufferSize)
+                if (read > 0) {
+                    outputStream.write(data, 0, read)
+                }
+            }
+            
+            outputStream.close()
+            return outputFile
+            
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to process audio to file")
+            return null
+        } finally {
+            audioRecord.stop()
+            audioRecord.release()
+        }
+    }
+    
+    /**
+     * Convert the PCM audio to a format suitable for the AI model
+     */
+    private suspend fun prepareAudioForAI(audioFile: File): File {
+        return withContext(Dispatchers.IO) {
+            // In a real implementation, this would convert the PCM to the appropriate format
+            // For the purpose of this implementation, we'll just return the original file
+            audioFile
+        }
+    }
 }
 
 /**

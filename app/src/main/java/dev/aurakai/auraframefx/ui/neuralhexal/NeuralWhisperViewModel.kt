@@ -72,6 +72,21 @@ class NeuralWhisperViewModel @Inject constructor(
         return neuralWhisper.generateSpelhook(description)
     }
     
+    /**
+     * Share current context with Kai
+     */
+    fun shareContextWithKai() {
+        val currentState = _conversationState.value
+        val message = if (currentState is ConversationState.Ready) {
+            currentState.response
+        } else {
+            // Share basic context if no conversation is active
+            "User requested context sharing with current emotion: ${_emotionState.value}"
+        }
+        
+        neuralWhisper.shareContextWithKai(message)
+    }
+    
     // Helper method to extract user input from response
     private fun extractUserInput(response: String): String {
         // In a real implementation, this would extract the actual user query

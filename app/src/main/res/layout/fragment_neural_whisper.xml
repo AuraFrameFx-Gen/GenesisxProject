@@ -38,9 +38,7 @@
         android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle">
-
-        <!-- Voice waves animation for when Aura is listening -->
+        app:layout_constraintTop_toBottomOf="@+id/subtitle">        <!-- Voice waves animation for when Aura is listening -->
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation_voice"
             android:layout_width="match_parent"
@@ -48,7 +46,8 @@
             android:visibility="visible"
             app:lottie_autoPlay="false"
             app:lottie_fileName="voice_waves.json"
-            app:lottie_loop="true" />
+            app:lottie_loop="true" 
+            app:lottie_colorFilter="#FF00FF" />
         
         <!-- Mood orb that shows Aura's emotional state -->
         <dev.aurakai.auraframefx.ui.components.AuraMoodOrb
