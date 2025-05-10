@@ -102,7 +102,8 @@ class KaiController @Inject constructor(
             EmotionState.Happy -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
             EmotionState.Sad -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
             EmotionState.Angry -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.ALERT)
-            EmotionState.Surprised -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.ALERT)            EmotionState.Neutral -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
+            EmotionState.Surprised -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.ALERT)
+            EmotionState.Neutral -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
         }
     }
     
