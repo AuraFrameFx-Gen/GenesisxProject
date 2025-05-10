@@ -1,0 +1,33 @@
+// Set Android-related system properties in this script
+System.setProperty("android.bundle.enableUncompressedNativeLibs", "false")
+System.setProperty("android.suppressUnsupportedCompileSdk", "true")
+System.setProperty("android.defaults.buildfeatures.buildconfig", "true")
+System.setProperty("android.nonTransitiveRClass", "false")
+System.setProperty("android.useAndroidX", "true")
+System.setProperty("android.disableAutomaticComponentCreation", "true")
+
+// Use a simpler approach to handle the problematic task
+gradle.taskGraph.whenReady { taskGraph ->
+    taskGraph.allTasks.each { task ->
+        if (task.name.contains("strip") && task.name.contains("DebugSymbols")) {
+            task.enabled = false
+        }
+    }
+}
+
+android {
+    packagingOptions {
+        if (packagingOptions.hasProperty("jniLibs")) {
+            jniLibs {
+                excludes.add("**/libAuraFrameFX.so")
+                excludes.add("**/libaura-fx-lib.so")
+                pickFirsts.add("**/libc++_shared.so")
+            }
+        } else {
+            // Fallback for older Gradle versions
+            exclude "**/libAuraFrameFX.so"
+            exclude "**/libaura-fx-lib.so"
+            pickFirst "**/libc++_shared.so"
+        }
+    }
+}
