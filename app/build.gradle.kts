@@ -190,9 +190,10 @@ dependencies {
     // Material design
     implementation(libs.material)
     
-    // Firebase dependencies with explicit version
+    // Firebase dependencies with updated version from Maven Repository
     implementation(platform(libs.firebase.bom))
-    implementation("com.google.firebase:firebase-vertexai:16.4.0")
+    // Update to the latest stable version found in Maven Repository
+    implementation("com.google.firebase:firebase-vertexai:30.6.0")
     // Other Firebase dependencies remain commented
     // implementation(libs.firebase.analytics.ktx)
     // implementation(libs.firebase.firestore.ktx)
