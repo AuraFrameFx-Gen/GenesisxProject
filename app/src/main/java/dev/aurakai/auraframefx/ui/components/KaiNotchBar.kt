@@ -568,11 +568,11 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
                             updateState(KaiState.ALERT)
                             speak("Detected $newErrors new error events", onComplete = {
                                 updateState(KaiState.IDLE)
-                            })
-                        }
+                            })                        }
                     }
                     
-                    delay(120000) // Check every 2 minutes                } catch (e: Exception) {
+                    delay(120000) // Check every 2 minutes
+                } catch (e: Exception) {
                     Timber.e(e, "Error in error checker")
                 }
             }

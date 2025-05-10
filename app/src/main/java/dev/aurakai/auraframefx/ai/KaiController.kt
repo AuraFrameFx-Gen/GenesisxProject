@@ -91,10 +91,10 @@ class KaiController @Inject constructor(
         currentState = state
         kaiNotchBar?.updateState(KaiNotchBar.KaiState.valueOf(state.name))
     }
-    
-    /**
+      /**
      * Update Kai's emotion
-     */    fun updateEmotion(emotion: EmotionState) {
+     */    
+    fun updateEmotion(emotion: EmotionState) {
         if (currentEmotion == emotion) return
         currentEmotion = emotion
         // Since updateEmotion doesn't exist in KaiNotchBar, we'll handle it differently
@@ -102,8 +102,8 @@ class KaiController @Inject constructor(
             EmotionState.Happy -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
             EmotionState.Sad -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
             EmotionState.Angry -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.ALERT)
-            EmotionState.Surprised -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.ALERT)
-            EmotionState.Neutral -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
+            EmotionState.Surprised -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.ALERT)            EmotionState.Neutral -> kaiNotchBar?.updateState(KaiNotchBar.KaiState.IDLE)
+        }
     }
     
     /**
