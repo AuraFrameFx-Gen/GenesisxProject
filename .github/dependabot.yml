@@ -1,26 +1,14 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
-  - package-ecosystem: "gradle" # Specify Gradle for Android projects
+  - package-ecosystem: "gradle"
     directory: "/"             # Root directory of the repository
     schedule:
       interval: "daily"        # Dependabot checks for updates daily
     commit-message:
-      prefix: "deps"           # Prefix for update commit messages
-    open-pull-requests-limit: 10
+      prefix: "deps"
+    open-pull-requests-limit: 5
     reviewers:
-      - AuraFrameFx-Gen        # Add reviewers for Dependabot PRs
+      - AuraFrameFx-Gen        # Replace with actual reviewers if needed
     labels:
       - "dependencies"
       - "gradle"
-    ignore:
-      - dependency-name: "com.google.android.*" # Ignore specific dependencies if needed
-        versions: ["<1.0.0"]                    # Ignore versions below 1.0.0
-    registries:
-      google-maven:
-        type: "maven-repository"
-        url: "https://maven.google.com/"
