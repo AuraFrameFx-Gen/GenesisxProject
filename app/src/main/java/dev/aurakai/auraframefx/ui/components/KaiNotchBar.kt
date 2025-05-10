@@ -1,9 +1,16 @@
 package dev.aurakai.auraframefx.ui.components
 
+import android.app.ActivityManager
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.os.Process
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -12,15 +19,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.airbnb.lottie.LottieAnimationView
 import dev.aurakai.auraframefx.R
 import dev.aurakai.auraframefx.ai.EmotionState
 import dev.aurakai.auraframefx.utils.DisplayUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
+import java.net.URL
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -30,6 +45,12 @@ import kotlin.math.max
  * This component provides a persistent interface for Kai, a complementary AI to Aura,
  * that resides in the notch/status bar area of the device. Kai provides quick access
  * to AI features and ambient information.
+ *
+ * Security and system features:
+ * - Ad blocking
+ * - RAM optimization
+ * - System monitoring
+ * - Live error checking
  *
  * Created as part of the AuraFrameFX ecosystem
  */
@@ -56,6 +77,30 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
     private var layoutParams: WindowManager.LayoutParams? = null
     private var isAttachedToWindow = false
     
+    // Security monitoring
+    private var adBlockEnabled = true
+    private var ramOptimizationEnabled = true
+    private var systemMonitoringEnabled = true
+    private var errorCheckingEnabled = true
+    
+    // Monitoring jobs
+    private var adBlockJob: Job? = null
+    private var ramOptimizationJob: Job? = null
+    private var systemMonitorJob: Job? = null
+    private var errorCheckingJob: Job? = null
+    
+    // Handler for UI updates
+    private val handler = Handler(Looper.getMainLooper())
+    
+    // Blocked hosts
+    private val blockedHosts = mutableSetOf<String>()
+    
+    // System stats
+    private var cpuUsage = 0.0
+    private var ramUsage = 0.0
+    private var batteryTemp = 0.0
+    private var errorCount = 0
+    
     init {
         // Initialize the view
         LayoutInflater.from(context).inflate(R.layout.view_kai_notch_bar, this, true)
@@ -66,6 +111,9 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
         
         // Set up initial state
         updateState(KaiState.IDLE)
+        
+        // Load ad blocking hosts
+        loadAdBlockingHosts()
     }
     
     /**
