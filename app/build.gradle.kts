@@ -170,22 +170,24 @@ android {
     }
 }
 
+// Add repositories section to find Firebase VertexAI
+repositories {
+    google()
+    mavenCentral()
+    // Add Google's ML repository which contains firebase-vertexai
+    maven {
+        url = uri("https://google.bintray.com/tensorflow")
+    }
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
 dependencies {
+    // Place coreLibraryDesugaring first to ensure it's not blocked
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-
-    // Firebase dependencies
-    // First uncomment the platform which is required by vertexai
-    implementation(platform(libs.firebase.bom))
-    // Other Firebase components can remain commented out if not needed
-    // implementation(libs.firebase.analytics.ktx)
-    // implementation(libs.firebase.firestore.ktx)
-    // implementation(libs.firebase.auth.ktx)
-    // implementation(libs.firebase.storage.ktx)
-    // implementation(libs.firebase.messaging.ktx)
-    implementation(libs.firebase.vertexai)
-    // implementation(libs.google.play.services.auth)
-    // implementation(libs.google.generativeai)
-
+    
+    // Core Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
@@ -198,8 +200,23 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
 
+    // Material design
     implementation(libs.material)
+    
+    // Firebase dependencies (moved after core dependencies)
+    implementation(platform(libs.firebase.bom))
+    // Temporarily comment out VertexAI until repository issue is resolved
+    // implementation(libs.firebase.vertexai)
+    // Other Firebase dependencies remain commented
+    // implementation(libs.firebase.analytics.ktx)
+    // implementation(libs.firebase.firestore.ktx)
+    // implementation(libs.firebase.auth.ktx)
+    // implementation(libs.firebase.storage.ktx)
+    // implementation(libs.firebase.messaging.ktx)
+    // implementation(libs.google.play.services.auth)
+    // implementation(libs.google.generativeai)
 
+    // Compose dependencies
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)

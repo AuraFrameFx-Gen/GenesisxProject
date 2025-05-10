@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
@@ -11,10 +11,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
+        // Add Google's ML repository which contains firebase-vertexai
+        maven { url = uri("https://google.bintray.com/tensorflow") }
+        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
     }
 }
 
-rootProject.name = "AuraFrameFX"
+rootProject.name = "Beta-Build"
 
 include(":app")
