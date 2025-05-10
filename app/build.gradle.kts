@@ -280,6 +280,7 @@ tasks.withType<JavaCompile>().configureEach {
     targetCompatibility = JavaVersion.VERSION_17.toString()
 }
 
-tasks.register<Delete>("clean") {
+// Only register the clean task if it doesn't already exist
+tasks.findByName("clean") ?: tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
