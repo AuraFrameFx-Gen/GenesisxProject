@@ -38,7 +38,7 @@ timber = "5.0.1"
 bouncyCastle = "1.78.1"
 remotepreferences = "0.8"
 desugarJdkLibs = "2.0.3"
-firebaseBom = "33.1.1"
+firebase-bom = "32.7.0"
 playServicesAuth = "21.2.0"
 googleGenerativeAi = "0.9.0"
 firebaseVertexAi = "20.0.0"
@@ -56,17 +56,17 @@ androidxTestExtTruth = "1.6.0"
 
 [libraries]
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
-firebase-vertexai = { group = "com.google.firebase", name = "firebase-vertexai", version = "20.0.0" }
-google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth"}
+firebase-vertexai = { group = "com.google.firebase", name = "firebase-vertexai", version = "16.4.0" }
+google-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 google-generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "googleGenerativeAi" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx"}
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
@@ -108,12 +108,12 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
-glide-okhttp-integration = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide"}
+glide-okhttp-integration = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 zip4j = { group = "net.lingala.zip4j", name = "zip4j", version.ref = "zip4j" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
-bouncycastle-prov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle"}
+bouncycastle-prov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncyCastle" }
 xposed-bridge = { group = "com.github.deltazefiro", name = "XposedBridge", version.ref = "xposedBridgeDeltazefiro" }
 libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
 libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
@@ -125,8 +125,8 @@ androidx-test-core = { group = "androidx.test", name = "core", version.ref = "an
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCoreTesting" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner"}
-androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules"}
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 

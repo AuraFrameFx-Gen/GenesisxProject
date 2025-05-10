@@ -6,8 +6,7 @@ plugins {
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.gms) apply false
 }
-
-allprojects {
+subprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions {
             jvmTarget = "17"
@@ -17,12 +16,13 @@ allprojects {
             )
         }
     }
+}
 
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = JavaVersion.VERSION_17.toString()
         targetCompatibility = JavaVersion.VERSION_17.toString()
     }
-}
+
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)

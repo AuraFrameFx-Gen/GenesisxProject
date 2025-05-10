@@ -190,10 +190,10 @@ dependencies {
     // Material design
     implementation(libs.material)
     
-    // Firebase dependencies with updated version from Maven Repository
+    // Firebase dependencies - use version catalog references
     implementation(platform(libs.firebase.bom))
-    // Update to the latest stable version found in Maven Repository
-    implementation("com.google.firebase:firebase-vertexai:30.6.0")
+    implementation(libs.firebase.vertexai)
+    
     // Other Firebase dependencies remain commented
     // implementation(libs.firebase.analytics.ktx)
     // implementation(libs.firebase.firestore.ktx)
@@ -273,4 +273,13 @@ dependencies {
 // Add proper toolchain configuration
 kotlin {
     jvmToolchain(17)
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = JavaVersion.VERSION_17.toString()
+    targetCompatibility = JavaVersion.VERSION_17.toString()
+}
+
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
 }

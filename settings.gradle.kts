@@ -9,12 +9,12 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google()  // This should include the Firebase artifacts
         mavenCentral()
-        // Simplified repository configuration for Firebase dependencies
-        maven { url = uri("https://maven.google.com") }
-        // If needed for other dependencies
         maven { url = uri("https://jitpack.io") }
+        
+        // Add the maven.google.com repository explicitly as an alternative
+        maven { url = uri("https://maven.google.com") }
     }
 }
 
