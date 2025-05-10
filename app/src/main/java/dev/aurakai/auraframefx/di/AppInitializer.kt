@@ -6,6 +6,7 @@ import androidx.startup.Initializer
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.aurakai.auraframefx.ai.KaiController
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,6 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class AppInitializer @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val kaiController: KaiController
 ) {
     fun initialize(application: Application) {
         Timber.d("Initializing application components...")
@@ -25,6 +27,7 @@ class AppInitializer @Inject constructor(
         initializeNativeLibraries()
         initializeCrashReporting()
         initializeAnalytics()
+        initializeKaiNotchBar()
 
         Timber.d("Application components initialized successfully")
     }
@@ -62,6 +65,16 @@ class AppInitializer @Inject constructor(
             Timber.d("Analytics initialized")
         } catch (e: Exception) {
             Timber.e(e, "Failed to initialize analytics")
+        }
+    }
+    
+    private fun initializeKaiNotchBar() {
+        try {
+            Timber.d("Initializing Kai Notch Bar...")
+            kaiController.initialize(context)
+            Timber.d("Kai Notch Bar initialized successfully")
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to initialize Kai Notch Bar")
         }
     }
 }

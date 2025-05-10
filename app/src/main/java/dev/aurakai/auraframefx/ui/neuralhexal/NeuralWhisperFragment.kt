@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -41,13 +42,15 @@ import java.util.Locale
 @AndroidEntryPoint
 class NeuralWhisperFragment : Fragment() {
     
-    private val viewModel: NeuralWhisperViewModel by viewModels()    private lateinit var statusText: TextView
+    private val viewModel: NeuralWhisperViewModel by viewModels()    
+    private lateinit var statusText: TextView
     private lateinit var conversationText: TextView
     private lateinit var emotionText: TextView
     private lateinit var animationView: LottieAnimationView
     private lateinit var activateButton: FloatingActionButton
     private lateinit var auraMoodOrb: AuraMoodOrb
     private lateinit var animationContainer: FrameLayout
+    private lateinit var shareWithKaiButton: Button
     
     // Track if this is the first launch to show showcase
     private var isFirstLaunch = true
@@ -77,7 +80,8 @@ class NeuralWhisperFragment : Fragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-          // Initialize views
+        
+        // Initialize views
         statusText = view.findViewById(R.id.text_status)
         conversationText = view.findViewById(R.id.text_conversation)
         emotionText = view.findViewById(R.id.text_emotion)
@@ -85,12 +89,19 @@ class NeuralWhisperFragment : Fragment() {
         auraMoodOrb = view.findViewById(R.id.aura_mood_orb)
         animationContainer = view.findViewById(R.id.animation_container)
         activateButton = view.findViewById(R.id.btn_activate)
+        shareWithKaiButton = view.findViewById(R.id.btn_share_with_kai)
         
         // Set up click listener for activation button
         activateButton.setOnClickListener {
             checkMicrophonePermission()
         }
-          // Set up long press listener to toggle between wave and mood orb
+        
+        // Set up click listener for share with Kai button
+        shareWithKaiButton.setOnClickListener {
+            shareCurrentContextWithKai()
+        }
+        
+        // Set up long press listener to toggle between wave and mood orb
         animationContainer.setOnLongClickListener {
             toggleAnimationMode()
             true
@@ -118,7 +129,7 @@ class NeuralWhisperFragment : Fragment() {
         }
         
         // Observe emotion state
-        viewModel.emotionState.observe(viewLifecycleOwner) { emotion ->
+        viewModel.emotionState.observe(viewLifecycleOwner) { emotion -> 
             updateEmotionUi(emotion)
         }
     }
@@ -157,7 +168,8 @@ class NeuralWhisperFragment : Fragment() {
             ).show()
         }
     }
-      private fun updateUiForState(state: ConversationState) {
+    
+    private fun updateUiForState(state: ConversationState) {
         when (state) {
             is ConversationState.Idle -> {
                 statusText.text = "Tap microphone to activate Neural Whisper"
@@ -219,7 +231,8 @@ class NeuralWhisperFragment : Fragment() {
             }
         }
     }
-      /**
+    
+    /**
      * Toggles between voice wave animation and mood orb display
      */
     private fun toggleAnimationMode() {
@@ -257,7 +270,8 @@ class NeuralWhisperFragment : Fragment() {
             }
         }
     }
-      private fun updateEmotionUi(emotion: EmotionState) {
+    
+    private fun updateEmotionUi(emotion: EmotionState) {
         val emotionText = when (emotion) {
             EmotionState.Excited -> "EMOTION: EXCITED"
             EmotionState.Happy -> "EMOTION: HAPPY"
@@ -291,5 +305,14 @@ class NeuralWhisperFragment : Fragment() {
         if (auraMoodOrb.isVisible) {
             auraMoodOrb.setEmotion(emotion)
         }
+    }
+    
+    private fun shareCurrentContextWithKai() {
+        // Implement the logic to share the current context with Kai
+        Toast.makeText(
+            requireContext(),
+            "Sharing current context with Kai...",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }
