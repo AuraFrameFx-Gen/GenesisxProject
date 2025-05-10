@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:background="@android:color/transparent">
+
+    <!-- Pulse animation for ambient awareness -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/kai_pulse_animation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="kai_pulse.json"
+        app:lottie_loop="true" />
+
+    <!-- Main Kai character animation -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/kai_animation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="kai_idle.json"
+        app:lottie_loop="true" />
+        
+</FrameLayout>
