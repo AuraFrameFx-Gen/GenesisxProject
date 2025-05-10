@@ -170,19 +170,6 @@ android {
     }
 }
 
-// Add repositories section to find Firebase VertexAI
-repositories {
-    google()
-    mavenCentral()
-    // Add Google's ML repository which contains firebase-vertexai
-    maven {
-        url = uri("https://google.bintray.com/tensorflow")
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-}
-
 dependencies {
     // Place coreLibraryDesugaring first to ensure it's not blocked
     coreLibraryDesugaring(libs.desugar.jdk.libs)
@@ -203,10 +190,9 @@ dependencies {
     // Material design
     implementation(libs.material)
     
-    // Firebase dependencies (moved after core dependencies)
+    // Firebase dependencies with explicit version
     implementation(platform(libs.firebase.bom))
-    // Temporarily comment out VertexAI until repository issue is resolved
-    // implementation(libs.firebase.vertexai)
+    implementation("com.google.firebase:firebase-vertexai:16.4.0")
     // Other Firebase dependencies remain commented
     // implementation(libs.firebase.analytics.ktx)
     // implementation(libs.firebase.firestore.ktx)

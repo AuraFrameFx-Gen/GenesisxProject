@@ -9,11 +9,16 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google() // Main Google repository
         mavenCentral()
-        // Add Google's ML repository which contains firebase-vertexai
-        maven { url = uri("https://google.bintray.com/tensorflow") }
-        maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots/") }
+        
+        // Add JCenter which might be needed for some older dependencies
+        jcenter() // Warning: JCenter is deprecated but might be needed for certain libraries
+        
+        // Specific repositories for Firebase VertexAI
+        maven { url = uri("https://maven.google.com") } // Google Maven repository
+        maven { url = uri("https://maven.scijava.org/content/repositories/public") }
+        maven { url = uri("https://jitpack.io") } // For GitHub dependencies
     }
 }
 
