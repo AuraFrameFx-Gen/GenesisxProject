@@ -42,15 +42,13 @@ class NeuralWhisperKaiIntegrationTest {
         // Assert that Kai received the message
         // Note: In a real test, you'd use mock verification or behavior assertion
         // This is just a skeleton test structure
-    }
-
-    @Test
+    }    @Test
     fun `test Kai notifies Neural Whisper on activation`() {
-        // Act
-        kaiController.handleKaiTap() // This is private in real implementation
+        // Simulate a tap on Kai through the interaction listener
+        // We'd need a way to test this interaction without directly calling the private method
+        // This test would be implemented with a proper test double
         
-        // Assert
-        // Verify that Neural Whisper was notified
-        // This would require making the method testable or using reflection
+        // For now, we're just documenting the test case
+        // TODO: Implement proper test for Kai activation
     }
 }

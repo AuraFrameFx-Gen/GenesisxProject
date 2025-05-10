@@ -311,19 +311,8 @@ class NeuralWhisper @Inject constructor(
             Please generate valid, efficient code that follows best practices. Include comments.
         """.trimIndent()
     }
-    
-    companion object {
-        @Volatile private var INSTANCE: NeuralWhisper? = null
-        
-        fun getInstance(
-            context: Context,
-            vertexAI: VertexAI,
-            generativeModel: GenerativeModel
-        ): NeuralWhisper {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: NeuralWhisper(context, vertexAI, generativeModel).also { INSTANCE = it }
-            }
-        }
+      companion object {
+        // No singleton pattern needed since we're using dependency injection
     }
     
     /**
