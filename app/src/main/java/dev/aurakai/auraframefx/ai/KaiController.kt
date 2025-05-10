@@ -48,6 +48,14 @@ class KaiController @Inject constructor(
     }
     
     /**
+     * Get the KaiNotchBar instance
+     * Used by KaiToolboxViewModel to access and update KaiNotchBar settings
+     */
+    fun getKaiNotchBar(): KaiNotchBar? {
+        return kaiNotchBar
+    }
+    
+    /**
      * Initialize Kai and attach to window
      */
     fun initialize(context: Context) {
