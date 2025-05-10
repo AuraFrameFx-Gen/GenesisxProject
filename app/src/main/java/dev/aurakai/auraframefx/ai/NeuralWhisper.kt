@@ -87,9 +87,7 @@ class NeuralWhisper @Inject constructor(
             it.receiveFromAura(message, currentEmotion)
             Timber.d("Shared context with Kai: $message")
         }
-    }
-
-    /**
+    }    /**
      * Processes voice input with context awareness
      */
     fun processVoiceCommand(audioFile: File) {
@@ -110,9 +108,11 @@ class NeuralWhisper @Inject constructor(
                 // Update Kai's emotional state for synchronization
                 kaiController?.updateEmotion(emotionSignature)
                 
-                // 2. Transcribe audio to text
+                // 2. Transcribe audio to text using Vertex AI
                 val transcription = transcribeAudio(audioFile)
                 Timber.d("Transcribed: $transcription")
+                  // Check if this is a command that should involve Kai
+                val involvesKai = shouldShareWithKai(transcription)
                 
                 // 3. Process with context
                 val response = generateContextualResponse(transcription, emotionSignature)
@@ -123,13 +123,19 @@ class NeuralWhisper @Inject constructor(
                 // 5. Update user preference model
                 userPreferences.update(transcription, emotionSignature)
                 
-                // 6. Share with Kai for enhanced context
-                if (shouldShareWithKai(transcription)) {
-                    shareContextWithKai("User query context: $transcription")
+                // 6. Share with Kai for enhanced context if appropriate
+                if (involvesKai) {
+                    Timber.d("Sharing context with Kai due to detected relevance")
+                    // Get Kai to help process the command
+                    kaiController?.receiveFromAura("User asked about: $transcription", emotionSignature)
+                    
+                    // Add Kai's contribution to the response
+                    val kaiEnhancedResponse = "$response\n\nKai is also aware of this context and will provide ambient support."
+                    _conversationState.value = ConversationState.Ready(kaiEnhancedResponse)
+                } else {
+                    // 7. Update state with standard response
+                    _conversationState.value = ConversationState.Ready(response)
                 }
-                
-                // 7. Update state
-                _conversationState.value = ConversationState.Ready(response)
                 
             } catch (e: Exception) {
                 Timber.e(e, "Error processing voice command")
