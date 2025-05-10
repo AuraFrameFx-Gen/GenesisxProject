@@ -47,21 +47,19 @@ class KaiToolboxViewModel @Inject constructor(
     )
     val adBlockingHosts: State<List<String>> = _adBlockingHosts
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)    init {
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+
+    init {
         // Initialize with current settings from KaiNotchBar if available
-        try {
-            kaiController?.getKaiNotchBar()?.let { kaiNotchBar ->
-                _adBlockingEnabled.value = kaiNotchBar.adBlockEnabled
-                _ramOptimizationEnabled.value = kaiNotchBar.ramOptimizationEnabled
-                _systemMonitoringEnabled.value = kaiNotchBar.systemMonitoringEnabled
-                _errorCheckingEnabled.value = kaiNotchBar.errorCheckingEnabled
-                _notchPosition.value = kaiNotchBar.notchPosition
-                _adBlockingHosts.value = kaiNotchBar.blockedHosts.toList()
-            } ?: run {
-                Timber.d("KaiNotchBar not available, using default settings")
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Error initializing KaiToolboxViewModel")
+        kaiController?.getKaiNotchBar()?.let { kaiNotchBar ->
+            _adBlockingEnabled.value = kaiNotchBar.adBlockEnabled
+            _ramOptimizationEnabled.value = kaiNotchBar.ramOptimizationEnabled
+            _systemMonitoringEnabled.value = kaiNotchBar.systemMonitoringEnabled
+            _errorCheckingEnabled.value = kaiNotchBar.errorCheckingEnabled
+            _notchPosition.value = kaiNotchBar.notchPosition
+            _adBlockingHosts.value = kaiNotchBar.blockedHosts.toList()
+        } ?: run {
+            Timber.d("KaiNotchBar not available, using default settings")
         }
     }
 

@@ -68,35 +68,12 @@ fun lightColorScheme(): ColorScheme = ColorScheme(
     background = LightBackground,
     onBackground = LightOnBackground,
     surface = LightSurface,
-    onSurface = LightOnSurface,    surfaceVariant = LightSurfaceVariant,
+    onSurface = LightOnSurface,
+    surfaceVariant = LightSurfaceVariant,
     onSurfaceVariant = LightOnSurfaceVariant,
     outline = LightOutline,
     inverseOnSurface = LightInverseOnSurface,
     inverseSurface = LightInverseSurface,
     inversePrimary = LightInversePrimary
-)
-
-fun darkColorScheme(): ColorScheme = ColorScheme(
-    primary = DarkPrimary,
-    onPrimary = DarkOnPrimary,
-    primaryContainer = DarkPrimaryContainer,
-    onPrimaryContainer = DarkOnPrimaryContainer,
-    secondary = DarkSecondary,
-    onSecondary = DarkOnSecondary,
-    secondaryContainer = DarkSecondaryContainer,
-    onSecondaryContainer = DarkOnSecondaryContainer,
-    tertiary = DarkTertiary,
-    onTertiary = DarkOnTertiary,
-    tertiaryContainer = DarkTertiaryContainer,
-    onTertiaryContainer = DarkOnTertiaryContainer,
-    background = DarkBackground,
-    onBackground = DarkOnBackground,
-    surface = DarkSurface,
-    onSurface = DarkOnSurface,
-    surfaceVariant = DarkSurfaceVariant,
-    onSurfaceVariant = DarkOnSurfaceVariant,
-    outline = DarkOutline,
-    inverseOnSurface = DarkInverseOnSurface,
-    inverseSurface = DarkInverseSurface,
-    inversePrimary = DarkInversePrimary
+            onSurface = NeonPurple
 )

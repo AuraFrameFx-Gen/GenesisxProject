@@ -76,11 +76,12 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
     private var windowManager: WindowManager? = null
     private var layoutParams: WindowManager.LayoutParams? = null
     private var isAttachedToWindow = false
-      // Security monitoring
-    var adBlockEnabled = true
-    var ramOptimizationEnabled = true
-    var systemMonitoringEnabled = true
-    var errorCheckingEnabled = true
+    
+    // Security monitoring
+    private var adBlockEnabled = true
+    private var ramOptimizationEnabled = true
+    private var systemMonitoringEnabled = true
+    private var errorCheckingEnabled = true
     
     // Monitoring jobs
     private var adBlockJob: Job? = null
@@ -92,15 +93,13 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
     private val handler = Handler(Looper.getMainLooper())
     
     // Blocked hosts
-    val blockedHosts = mutableSetOf<String>()
-      // System stats
+    private val blockedHosts = mutableSetOf<String>()
+    
+    // System stats
     private var cpuUsage = 0.0
     private var ramUsage = 0.0
     private var batteryTemp = 0.0
     private var errorCount = 0
-    
-    // Position of the notch (0.0 = top, 1.0 = bottom)
-    var notchPosition = 0.0f
     
     init {
         // Initialize the view
@@ -383,10 +382,11 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
             }
         }
     }
-      /**
+    
+    /**
      * Start ad blocker service
      */
-    fun startAdBlocker() {
+    private fun startAdBlocker() {
         adBlockJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 try {
@@ -407,17 +407,9 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
     }
     
     /**
-     * Stop ad blocker service
-     */
-    fun stopAdBlocker() {
-        adBlockJob?.cancel()
-        adBlockJob = null
-        Timber.d("Ad blocker stopped")
-    }
-      /**
      * Start RAM optimization service
      */
-    fun startRamOptimizer() {
+    private fun startRamOptimizer() {
         ramOptimizationJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 try {
@@ -452,15 +444,6 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
     }
     
     /**
-     * Stop RAM optimizer service
-     */
-    fun stopRamOptimizer() {
-        ramOptimizationJob?.cancel()
-        ramOptimizationJob = null
-        Timber.d("RAM optimizer stopped")
-    }
-    
-    /**
      * Optimize device memory
      */
     private fun optimizeMemory(activityManager: ActivityManager) {
@@ -480,10 +463,11 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
             Timber.e(e, "Error optimizing memory")
         }
     }
-      /**
+    
+    /**
      * Start system monitoring service
      */
-    fun startSystemMonitor() {
+    private fun startSystemMonitor() {
         systemMonitorJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 try {
@@ -517,15 +501,6 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
     }
     
     /**
-     * Stop system monitoring service
-     */
-    fun stopSystemMonitor() {
-        systemMonitorJob?.cancel()
-        systemMonitorJob = null
-        Timber.d("System monitor stopped")
-    }
-    
-    /**
      * Read CPU usage from proc
      */
     private fun readCpuUsage(): Double {
@@ -552,10 +527,11 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
             return 0.0
         }
     }
-      /**
+    
+    /**
      * Start error checking service
      */
-    fun startErrorChecker() {
+    private fun startErrorChecker() {
         errorCheckingJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
                 try {
@@ -568,7 +544,8 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
                             updateState(KaiState.ALERT)
                             speak("Detected $newErrors new error events", onComplete = {
                                 updateState(KaiState.IDLE)
-                            })                        }
+                            })
+                        }
                     }
                     
                     delay(120000) // Check every 2 minutes
@@ -576,56 +553,6 @@ class KaiNotchBar(context: Context, attrs: AttributeSet? = null) : FrameLayout(c
                     Timber.e(e, "Error in error checker")
                 }
             }
-        }
-    }
-    
-    /**
-     * Stop error checker service
-     */
-    fun stopErrorChecker() {
-        errorCheckingJob?.cancel()
-        errorCheckingJob = null
-        Timber.d("Error checker stopped")
-    }
-    
-    /**
-     * Update ad blocker settings with new hosts list
-     */
-    fun updateAdBlocker() {
-        if (adBlockEnabled) {
-            // Restart ad blocker to apply new settings
-            adBlockJob?.cancel()
-            startAdBlocker()
-            Timber.d("Ad blocker updated with ${blockedHosts.size} hosts")
-        }
-    }
-      /**
-     * Update the notch bar position
-     */
-    fun updateNotchPosition() {
-        // In a real implementation, would update the window layout params
-        if (isAttachedToWindow && windowManager != null && layoutParams != null) {
-            try {
-                windowManager?.updateViewLayout(this, layoutParams)
-                Timber.d("Notch position updated to $notchPosition")
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to update notch position")
-            }
-        }
-    }
-    
-    /**
-     * Flash the pulse animation to indicate activity
-     */
-    private fun flashPulse() {
-        try {
-            pulseAnimationView.alpha = 1.0f
-            pulseAnimationView.playAnimation()
-            handler.postDelayed({
-                pulseAnimationView.alpha = 0.3f
-            }, 800)
-        } catch (e: Exception) {
-            Timber.e(e, "Error flashing pulse animation")
         }
     }
     
