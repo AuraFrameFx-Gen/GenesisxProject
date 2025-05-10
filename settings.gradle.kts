@@ -3,7 +3,6 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev") }
     }
 }
 
@@ -14,7 +13,6 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
     }
-
 }
 
 rootProject.name = "AuraFrameFX"

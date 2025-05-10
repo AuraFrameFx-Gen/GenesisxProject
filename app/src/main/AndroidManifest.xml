@@ -3,38 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="dev.aurakai.auraframefx">
 
-    <!-- TV Support -->
-    <uses-feature
-        android:name="android.software.leanback"
-        android:required="false" />
-
-    <!-- Hardware Features -->
-    <uses-feature
-        android:name="android.hardware.touchscreen"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.bluetooth"
-        android:required="false" />
-
-    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
     <application
         android:name=".MainApplication"
@@ -43,49 +26,63 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:largeHeap="true"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AuraFrameFX"
+        android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="34">
 
-        <!-- Material 3 Theme Metadata -->
         <meta-data
-            android:name="android.app.theme"
-            android:resource="@style/Theme.AuraFrameFX" />
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="@string/xposed_description" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="93" />
 
-        <!-- Services -->
-        <service
-            android:name=".service.VertexCloudService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-
-        <service
-            android:name=".service.VertexSyncService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE">
-            <intent-filter>
-                <action android:name="android.app.job.JobService" />
-            </intent-filter>
-        </service>
-
-        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AuraFrameFX">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="dev.aurakai.auraframefx.ACTION_OPEN_KAI_TOOLBOX" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
+        <service
+            android:name=".service.KaiOverlayService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".service.OverlayService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".service.AmbientMusicService"
+            android:enabled="true"
+            android:exported="false"/>
+        <service
+            android:name=".data.BackupService"
+            android:enabled="true"
+            android:exported="false"/>
+        <service
+            android:name=".service.VertexCloudService"
+            android:exported="false" />
+        <service
+            android:name=".service.VertexSyncService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <!-- Broadcast Receivers -->
         <receiver
             android:name=".receiver.BootCompletedReceiver"
             android:enabled="true"
@@ -97,7 +94,12 @@
             </intent-filter>
         </receiver>
 
-        <!-- File Provider -->
+        <provider
+            android:name=".provider.XhancementPrefsProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="true"
+            android:grantUriPermissions="true"/>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -108,27 +110,19 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- WorkManager Configuration -->
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:exported="false"
-            tools:node="remove" />
-
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
+            <meta-data android:name="dev.aurakai.auraframefx.di.WorkManagerInitializer"
+                android:value="androidx.startup" />
             <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
+                android:name="androidx.work.impl.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
+
     </application>
 
-    <!-- Xposed Framework -->
-    <uses-permission android:name="de.robv.android.xposed.installer.INSTALL" />
-    <uses-permission android:name="de.robv.android.xposed.installer.UPDATE_MODULE" />
-    <uses-permission android:name="de.robv.android.xposed.installer.INSTALL_FRIDAY_BLACK" />
 </manifest>

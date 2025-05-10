@@ -22,8 +22,6 @@ plugins {
     id("kotlin-kapt")
 }
 
-val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
 android {
     namespace = "dev.aurakai.auraframefx"
     compileSdk = 34
@@ -45,25 +43,16 @@ android {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
         }
 
-        externalNativeBuild {
-            cmake {
-                path = file("src/main/cpp/CMakeLists.txt")
-                version = "3.22.1"
-                cppFlags.addAll(listOf(
-                    "-std=c++17",
-                    "-fexceptions",
-                    "-frtti"
-                ))
-                arguments.addAll(listOf(
-                    "-DANDROID_STL=c++_shared",
-                    "-DANDROID_ARM_NEON=TRUE"
-                ))
-            }
-        }
-
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
             arg("room.incremental", "true")
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
         }
     }
 
@@ -72,7 +61,7 @@ android {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
-                setStoreFile(rootProject.file(keystoreProperties.getProperty("storeFile", "keystore/default.jks")))
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile", "keystore/default.jks"))
                 storePassword = keystoreProperties.getProperty("storePassword")
             }
         }
@@ -110,23 +99,23 @@ android {
 
     sourceSets {
         getByName("main") {
-             java.srcDirs("src/main/java", "src/main/xposed")
-             res.srcDirs("src/main/res")
-             assets.srcDirs("src/main/assets")
-             jniLibs.srcDirs("src/main/jniLibs")
+            java.srcDirs("src/main/java", "src/main/xposed")
+            res.srcDirs("src/main/res")
+            assets.srcDirs("src/main/assets")
+            jniLibs.srcDirs("src/main/jniLibs")
         }
         findByName("standard")?.java?.srcDirs("src/standard/java")
         findByName("foss")?.java?.srcDirs("src/foss/java")
     }
 
-     splits {
-         abi {
-             isEnable = true
-             reset()
-             include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-             isUniversalApk = true
-         }
-     }
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = true
+        }
+    }
 
     buildFeatures {
         buildConfig = true
@@ -154,8 +143,8 @@ android {
             ))
         }
         jniLibs {
-             pickFirsts.add("**/libc++_shared.so")
-             useLegacyPackaging = false
+            pickFirsts.add("**/libc++_shared.so")
+            useLegacyPackaging = false
         }
     }
 
@@ -172,12 +161,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-         jvmTarget = "17"
-         freeCompilerArgs += listOf(
-             "-Xjvm-default=all",
-             "-opt-in=kotlin.RequiresOptIn"
-         )
-     }
+        jvmTarget = "17"
+        freeCompilerArgs += listOf(
+            "-Xjvm-default=all",
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -189,7 +181,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.messaging.ktx)
-    implementation(libs.firebase.vertexai.ktx)
+    // implementation(libs.firebase.vertexai.ktx) // Temporarily commented out, missing from public Maven
     implementation(libs.google.play.services.auth)
     implementation(libs.google.generativeai)
 
@@ -250,7 +242,6 @@ dependencies {
 
     compileOnly(libs.xposed.bridge)
     compileOnly("com.github.deltazefiro:XposedBridge:${libs.versions.xposedBridgeDeltazefiro.get()}:sources")
-
 
     implementation(libs.libsu.core)
     implementation(libs.libsu.service)
