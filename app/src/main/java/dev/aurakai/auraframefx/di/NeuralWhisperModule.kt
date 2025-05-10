@@ -27,6 +27,6 @@ object NeuralWhisperModule {
         vertexAI: VertexAI,
         generativeModel: GenerativeModel
     ): NeuralWhisper {
-        return NeuralWhisper.getInstance(context, vertexAI, generativeModel)
+        return NeuralWhisper(context, vertexAI, generativeModel)
     }
 }
