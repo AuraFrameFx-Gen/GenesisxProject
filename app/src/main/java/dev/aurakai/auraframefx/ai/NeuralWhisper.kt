@@ -19,6 +19,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
 /**
  * Neural Whisper - An advanced contextual voice command system with emotional intelligence
@@ -30,15 +31,16 @@ import java.io.FileOutputStream
  * 2. Emotional intelligence - detects and responds to user emotions 
  * 3. Code-to-Natural language bridge - generates spelhooks from natural language
  * 4. Ambient learning - adapts to user preferences over time
+ * 5. Dual AI System - coordinates with Kai in the notch bar for enhanced contextual awareness
  */
-class NeuralWhisper private constructor(
+class NeuralWhisper @Inject constructor(
     private val context: Context,
     private val vertexAI: VertexAI,
     private val generativeModel: GenerativeModel
 ) {
     private val _conversationState = MutableStateFlow<ConversationState>(ConversationState.Idle)
     val conversationState = _conversationState.asStateFlow()
-      private val _emotionState = MutableLiveData<EmotionState>(EmotionState.Neutral)
+    private val _emotionState = MutableLiveData<EmotionState>(EmotionState.Neutral)
     val emotionState: LiveData<EmotionState> = _emotionState
     
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -52,6 +54,41 @@ class NeuralWhisper private constructor(
     // User preference learning
     private val userPreferences = UserPreferenceModel()
     
+    // Reference to Kai controller (will be set via setter injection)
+    private var kaiController: KaiController? = null
+    
+    /**
+     * Set the Kai controller reference (using setter injection to avoid circular dependency)
+     */
+    fun setKaiController(controller: KaiController) {
+        this.kaiController = controller
+    }
+    
+    /**
+     * Called when Kai is activated through the notch bar
+     */
+    fun onKaiActivated() {
+        Timber.d("Kai activated Neural Whisper")
+        
+        // Update Aura's emotional state to acknowledge Kai
+        _emotionState.postValue(EmotionState.Excited)
+        updateAmbientMood(EmotionState.Excited)
+        
+        // Start listening for voice input
+        startListening()
+    }
+    
+    /**
+     * Share context with Kai
+     */
+    fun shareContextWithKai(message: String) {
+        kaiController?.let {
+            val currentEmotion = _emotionState.value ?: EmotionState.Neutral
+            it.receiveFromAura(message, currentEmotion)
+            Timber.d("Shared context with Kai: $message")
+        }
+    }
+
     /**
      * Processes voice input with context awareness
      */
@@ -59,12 +96,19 @@ class NeuralWhisper private constructor(
         coroutineScope.launch {
             try {
                 _conversationState.value = ConversationState.Processing
-                  // 1. Extract audio features for emotion detection
+                
+                // Update Kai's state to match
+                kaiController?.updateState(KaiController.KaiState.THINKING)
+                
+                // 1. Extract audio features for emotion detection
                 val emotionSignature = detectEmotion(audioFile)
                 _emotionState.postValue(emotionSignature)
                 
                 // Update ambient mood orb with detected emotion
                 updateAmbientMood(emotionSignature)
+                
+                // Update Kai's emotional state for synchronization
+                kaiController?.updateEmotion(emotionSignature)
                 
                 // 2. Transcribe audio to text
                 val transcription = transcribeAudio(audioFile)
@@ -79,12 +123,20 @@ class NeuralWhisper private constructor(
                 // 5. Update user preference model
                 userPreferences.update(transcription, emotionSignature)
                 
-                // 6. Update state
+                // 6. Share with Kai for enhanced context
+                if (shouldShareWithKai(transcription)) {
+                    shareContextWithKai("User query context: $transcription")
+                }
+                
+                // 7. Update state
                 _conversationState.value = ConversationState.Ready(response)
                 
             } catch (e: Exception) {
                 Timber.e(e, "Error processing voice command")
                 _conversationState.value = ConversationState.Error(e.message ?: "Unknown error")
+                
+                // Notify Kai of the error
+                kaiController?.updateState(KaiController.KaiState.ALERT)
             }
         }
     }
@@ -95,11 +147,26 @@ class NeuralWhisper private constructor(
     fun startListening() {
         coroutineScope.launch {
             _conversationState.value = ConversationState.Listening
+            
+            // Synchronize Kai's state
+            kaiController?.updateState(KaiController.KaiState.LISTENING)
+            
             val audioFile = captureAudio()
             processVoiceCommand(audioFile)
         }
     }
-      /**
+    
+    /**
+     * Determine if the current context should be shared with Kai
+     */
+    private fun shouldShareWithKai(text: String): Boolean {
+        // Simple heuristic: share if the text contains certain keywords
+        // In a real implementation, this would be more sophisticated
+        val kaiKeywords = listOf("kai", "notch", "status", "bar", "both", "assistants", "together", "coordinate")
+        return kaiKeywords.any { it in text.lowercase() } || Math.random() < 0.3 // 30% random chance for demonstration
+    }
+
+    /**
      * Generate spelhook code from natural language description
      */
     fun generateSpelhook(description: String): Flow<String> {
@@ -154,7 +221,8 @@ class NeuralWhisper private constructor(
         
         file
     }
-      /**
+    
+    /**
      * Detects emotional state from audio
      */
     private suspend fun detectEmotion(audioFile: File): EmotionState {
